@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><title>iPhoneだけでアプリを作って売る手順書</title>
+<style>
+@page{size:A4;margin:16mm 14mm 16mm 14mm}
+body{font-family:"IPAGothic","IPAゴシック",sans-serif;color:#1d2340;font-size:10.5pt;line-height:1.7}
+h1{font-size:22pt;margin:0 0 4mm;color:#141a33;line-height:1.3}
+h2{font-size:15pt;color:#fff;background:#1f2850;padding:2.5mm 4mm;margin:9mm 0 4mm;border-left:6px solid #f2c14e;page-break-after:avoid}
+h3{font-size:12pt;color:#1f2850;border-bottom:2px solid #f2c14e;padding-bottom:1mm;margin:6mm 0 2mm;page-break-after:avoid}
+.cover{border:3px solid #1f2850;border-radius:4px;padding:10mm;margin-top:20mm;page-break-after:always}
+.cover .sub{font-size:12pt;color:#555c80}
+.cover table{margin-top:8mm}
+ol.steps{padding-left:0;list-style:none;counter-reset:s;margin:0}
+ol.steps>li{counter-increment:s;position:relative;padding:1.5mm 0 1.5mm 10mm;border-bottom:1px dotted #c8cbe0;page-break-inside:avoid}
+ol.steps>li::before{content:counter(s);position:absolute;left:0;top:1.8mm;width:6.5mm;height:6.5mm;border-radius:50%;background:#1f2850;color:#fff;text-align:center;font-size:9pt;line-height:6.5mm}
+.tap{display:inline-block;background:#eef0fa;border:1px solid #b8bde0;border-radius:3px;padding:0 1.5mm;font-size:9.5pt;white-space:nowrap}
+code,.code{font-family:"IPAGothic",monospace;background:#f4f4f8;border:1px solid #dcdfee;border-radius:2px;padding:0 1mm;font-size:9.5pt}
+pre{font-family:"IPAGothic",monospace;background:#f4f4f8;border:1px solid #dcdfee;padding:3mm;font-size:9pt;white-space:pre-wrap;page-break-inside:avoid}
+.box{border:1.5px solid #1f2850;border-radius:3px;padding:3mm 4mm;margin:3mm 0;page-break-inside:avoid}
+.warn{border-color:#d94b4b;background:#fff5f5}
+.tip{border-color:#c79a1e;background:#fffaeb}
+.box b.h{display:block;margin-bottom:1mm}
+table{border-collapse:collapse;width:100%;margin:2mm 0;font-size:9.5pt;page-break-inside:avoid}
+th,td{border:1px solid #b8bde0;padding:1.5mm 2mm;text-align:left;vertical-align:top}
+th{background:#eef0fa}
+.who{display:inline-block;font-size:8.5pt;border-radius:2px;padding:0 1.5mm;margin-right:1mm;color:#fff}
+.me{background:#d9822b}.cl{background:#3f5fd1}
+.flow{display:flex;gap:2mm;flex-wrap:wrap;margin:3mm 0}
+.flow div{flex:1;min-width:20mm;border:1.5px solid #1f2850;border-radius:3px;padding:2mm;font-size:9pt;text-align:center}
+.flow div b{display:block;color:#1f2850;font-size:10pt}
+.small{font-size:9pt;color:#555c80}
+.check li{list-style:"□ ";}
+</style></head><body>
+
+<div class="cover">
+<h1>iPhoneだけで作って売る<br>中小企業診断士 学習アプリ 手順書</h1>
+<div class="sub">Claude Code ／ GitHub ／ Apple Developer ／ Codemagic を使い、Macなし・iPhoneだけで「開発 → 自分のiPhoneでテスト → App Storeで販売」まで進めるための手順</div>
+<table>
+<tr><th style="width:32%">版</th><td>v1.0（2026年11月27日）</td></tr>
+<tr><th>アプリ仮名</th><td>診断士クエスト（RPG風・学習管理）</td></tr>
+<tr><th>画面モック</th><td>https://claude.ai/artifact/1rZy4CuqbJxBEyKjJincjo</td></tr>
+<tr><th>表記の見方</th><td><span class="who me">あなた</span>＝あなたがiPhoneで操作する作業 ／ <span class="who cl">Claude</span>＝Claude Codeに依頼して任せる作業<br><span class="tap">ボタン名</span>＝タップする場所</td></tr>
+</table>
+<p class="small" style="margin-top:8mm">※ Apple・Codemagic・GitHubの画面名や料金は変更されることがあります。表記が違う場合は近い名前のボタンを探すか、Claude Codeに画面のスクリーンショットを送って質問してください。</p>
+</div>
+
+<h2>0. 全体像</h2>
+<div class="flow">
+<div><b>①準備</b>アカウント4つ作成</div>
+<div><b>②要件決め</b>モックを見て質問に回答</div>
+<div><b>③開発</b>Claude Codeがコードを書きGitHubへ</div>
+<div><b>④ビルド</b>CodemagicのMacで自動ビルド</div>
+<div><b>⑤テスト</b>TestFlightで自分のiPhoneへ</div>
+<div><b>⑥販売</b>App Store審査→公開</div>
+</div>
+<h3>なぜMacなしでできるのか</h3>
+<p>iPhoneアプリのビルドには本来Mac（Xcode）が必要です。この手順では<b>Codemagicというクラウド上のMac</b>にビルドと署名を任せます。コードはClaude Codeがクラウド上で書き、GitHubに保存。GitHubに保存されるとCodemagicが自動でビルドし、TestFlight（Appleのテスト配信アプリ）経由であなたのiPhoneに届きます。</p>
+<h3>開発技術：Flutterを採用</h3>
+<p>「お任せ」の回答を受け、<b>Flutter</b>を採用します。理由は3つです。(1) Codemagicの標準対応で設定が簡単。(2) Claude Code側でWeb版として動作確認でき、ビルド失敗の往復を減らせる。(3) RPG風のアニメーションや独自デザインを作りやすい。</p>
+<h3>費用の目安</h3>
+<table>
+<tr><th>項目</th><th>費用</th><th>備考</th></tr>
+<tr><td>Apple Developer Program</td><td>年額 99米ドル相当（日本の表示価格は登録画面で確認）</td><td>必須。これがないとTestFlight・販売ができない</td></tr>
+<tr><td>Codemagic</td><td>個人は無料枠あり（月500分のビルド時間が目安）</td><td>1回のビルドは10〜20分程度。個人開発なら無料枠で足りる見込み</td></tr>
+<tr><td>GitHub</td><td>無料</td><td>非公開リポジトリも無料</td></tr>
+<tr><td>Claude</td><td>ご契約中のプラン</td><td>モック段階で要件を固め、消費を抑える</td></tr>
+<tr><td>App Store販売手数料</td><td>売上の15%（年間売上100万ドル以下で「Small Business Program」に申請した場合）</td><td>申請しないと30%。必ず申請する</td></tr>
+</table>
+<h3>期間の目安</h3>
+<table>
+<tr><th>フェーズ</th><th>目安</th></tr>
+<tr><td>①準備（Apple Developerの審査待ちを含む）</td><td>1日〜2週間</td></tr>
+<tr><td>②要件決め（モック往復3〜5回）</td><td>1〜2週間</td></tr>
+<tr><td>③〜⑤開発・テスト（問題1,100問の検証含む）</td><td>1〜2か月</td></tr>
+<tr><td>⑥審査・公開</td><td>数日〜1週間</td></tr>
+</table>
+
+<h2>1. 準備：アカウントを作る</h2>
+<p>②の要件決めと並行して進めてください。特にApple Developerは審査に時間がかかることがあるので<b>最初に</b>申し込みます。</p>
+
+<h3>1-1. Apple ID の2ファクタ認証を確認 <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>iPhoneの <span class="tap">設定</span> → 一番上の <span class="tap">自分の名前</span> → <span class="tap">サインインとセキュリティ</span> を開く。</li>
+<li><span class="tap">2ファクタ認証</span> が「オン」になっていることを確認。オフなら画面の指示でオンにする。</li>
+</ol>
+
+<h3>1-2. Apple Developer Program に登録 <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>App Storeで「<b>Apple Developer</b>」アプリ（Apple公式・無料）をインストール。</li>
+<li>アプリを開き、下部の <span class="tap">アカウント</span> → Apple IDでサインイン。</li>
+<li><span class="tap">今すぐ登録</span>（Enroll Now）をタップ。</li>
+<li>登録区分は <b>個人</b> を選ぶ（法人で売る場合はD-U-N-S番号が必要になり時間がかかる）。</li>
+<li>氏名・住所はローマ字で入力（例：Taro Yamada）。<b>App Storeの販売者名として本名が表示されます。</b></li>
+<li>本人確認書類の撮影を求められたら画面の指示どおり撮影する。</li>
+<li>年会費を支払う（App内課金として処理される）。</li>
+<li>「登録完了」のメールが届くまで待つ（数分〜数日）。</li>
+</ol>
+<div class="box tip"><b class="h">ここで販売の準備も済ませる</b>登録完了後、Safariで <code>appstoreconnect.apple.com</code> を開き、<span class="tap">ビジネス</span>（または「契約／税金／口座情報」）から<b>有料Appの契約</b>に同意し、<b>銀行口座</b>と<b>税務情報</b>（日本居住の個人は米国税務フォーム W-8BEN）を登録します。これがないと有料販売できません。続けて Small Business Program（手数料15%）にも申請します（Safariで <code>developer.apple.com/app-store/small-business-program/</code>）。</div>
+
+<h3>1-3. GitHub アカウントとリポジトリ <span class="who me">あなた</span></h3>
+<p>このリポジトリ <code>okazaki0504/first</code> は既にあり、Claude Codeと接続済みです。新しく作り直す必要はありません。</p>
+<ol class="steps">
+<li>App Storeで「<b>GitHub</b>」公式アプリをインストールしてサインイン（進捗やビルド結果の確認用）。</li>
+<li>リポジトリを非公開にしたい場合：Safariで <code>github.com/okazaki0504/first</code> → <span class="tap">Settings</span> → 一番下の <span class="tap">Change visibility</span> → <span class="tap">Make private</span>。<br><span class="small">※有料アプリのソースなので非公開を推奨。</span></li>
+</ol>
+
+<h3>1-4. Codemagic アカウント <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>Safariで <code>codemagic.io</code> を開き <span class="tap">Sign up</span> → <span class="tap">Sign up with GitHub</span>。</li>
+<li>GitHubの許可画面で <span class="tap">Authorize</span>。アクセスできるリポジトリに <code>first</code> を含める。</li>
+<li>チーム作成を聞かれたら個人（Personal account）を選ぶ。</li>
+</ol>
+<div class="box tip"><b class="h">Safariで操作しにくいとき</b>Codemagic・App Store ConnectはPC向け画面です。Safariのアドレスバー左の <span class="tap">ぁあ</span> → <span class="tap">デスクトップ用Webサイトを表示</span> にすると操作しやすくなります。</div>
+
+<h2>2. 要件を固める（モック＋質問の往復）</h2>
+<p>Claude Codeのリソースを節約するため、本物のアプリを作る前に<b>ブラウザで触れるモック</b>で画面と遊び方を固めます。</p>
+<ol class="steps">
+<li><span class="who me">あなた</span> モックのURLをiPhoneのSafariで開き、全5タブ（拠点・バトル・修行・記録・冒険の書）を触る。</li>
+<li><span class="who me">あなた</span> 気になった点をClaude Codeのチャットに<b>箇条書き</b>で送る。例：「バトルの効果音が欲しい」「拠点にキャラ育成を」「タイマーは25分ポモドーロ固定で」。</li>
+<li><span class="who cl">Claude</span> 質問を返しながらモックを更新（URLは同じまま）。</li>
+<li>2〜3を「このまま作ってOK」と言えるまで繰り返す。最終版の要件はClaudeが <code>docs/requirements.md</code> に書き出します。</li>
+</ol>
+<h3>現時点で決まっている要件</h3>
+<table>
+<tr><th style="width:28%">項目</th><th>決定内容</th></tr>
+<tr><td>中心機能</td><td>学習時間の記録・可視化／学習計画・進捗管理／過去問の正誤記録／同梱の一問一答で日々の基礎練習</td></tr>
+<tr><td>対象</td><td>1次7科目＋2次4事例</td></tr>
+<tr><td>販売形態</td><td>買い切り有料（価格は要決定）</td></tr>
+<tr><td>データ保存</td><td>端末内のみ（サーバーなし・ログインなし）</td></tr>
+<tr><td>一問一答</td><td>Claudeがオリジナル問題を作成 → あなたが正誤を検証。各科目約100問（計約1,100問）</td></tr>
+<tr><td>デザイン</td><td>RPGゲーム風。レベル・EXP・連続日数・デイリークエスト・モンスター討伐で毎日続けたくなる</td></tr>
+<tr><td>技術</td><td>Flutter（iOS）＋Codemagic</td></tr>
+</table>
+
+<h2>3. 開発：Claude Codeに作ってもらう</h2>
+<h3>3-1. iPhoneからClaude Codeを使う <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>Claudeアプリ（またはSafariで <code>claude.ai/code</code>）を開き、このセッションを開く。</li>
+<li>要件が固まったら次のように依頼する：<br><pre>モックの最終版と docs/requirements.md に沿って、Flutterで本番アプリを実装してください。Codemagic用の codemagic.yaml も作成し、ブランチにpushしてください。</pre></li>
+<li>Claudeが作業し、GitHubにコードをpush（保存）します。完了報告を待つ。</li>
+</ol>
+<h3>3-2. Claudeが行うこと <span class="who cl">Claude</span></h3>
+<ul>
+<li>Flutterプロジェクト作成（画面・RPG演出・データ保存・一問一答データ）</li>
+<li>一問一答をデータファイル（<code>assets/questions/*.json</code>）として作成 → 検証用の一覧PDFも出力</li>
+<li>自動テストを書き、Web版で動作確認</li>
+<li><code>codemagic.yaml</code>（ビルド・署名・TestFlight送信の設定）を作成</li>
+<li>プライバシーポリシー（「データを収集しません」）のページを作成</li>
+</ul>
+<h3>3-3. 問題の検証 <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>Claudeが出力する「問題検証シート（PDF）」を科目ごとに確認する。</li>
+<li>誤り・あいまいな選択肢を見つけたら、問題IDと修正内容をチャットで送る（例：「fin-023 の正解はBでは？」）。</li>
+<li>Claudeが修正し、根拠も併記して再出力。全科目で「OK」が出るまで繰り返す。</li>
+</ol>
+<div class="box warn"><b class="h">著作権の注意</b>過去問の問題文・選択肢をそのまま収録すると著作権侵害のおそれがあります。アプリには<b>オリジナル問題のみ</b>を収録し、過去問は「年度・問題番号ごとの○×記録」だけに使います。市販テキストの文章を写して送るのも避けてください。</div>
+
+<h2>4. ビルド：Codemagicの設定（最初の1回だけ）</h2>
+<h3>4-1. Bundle ID（アプリの識別子）を登録 <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>Safari（デスクトップ表示）で <code>developer.apple.com/account</code> → <span class="tap">Certificates, IDs &amp; Profiles</span> → <span class="tap">Identifiers</span> → <span class="tap">＋</span>。</li>
+<li><span class="tap">App IDs</span> → <span class="tap">Continue</span> → <span class="tap">App</span> → <span class="tap">Continue</span>。</li>
+<li>Description：<code>Shindan Quest</code>、Bundle ID：<span class="tap">Explicit</span> を選び、Claudeが指定する値（例 <code>com.okazaki0504.shindanquest</code>）を入力 → <span class="tap">Continue</span> → <span class="tap">Register</span>。</li>
+</ol>
+<h3>4-2. App Store Connect にアプリを登録 <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>Safariで <code>appstoreconnect.apple.com</code> → <span class="tap">アプリ</span> → <span class="tap">＋</span> → <span class="tap">新規App</span>。</li>
+<li>プラットフォーム：iOS／名前：App Storeに表示する名前（他と重複不可）／言語：日本語／バンドルID：4-1で登録したもの／SKU：<code>shindanquest001</code>（任意の英数字）／アクセス：フルアクセス → <span class="tap">作成</span>。</li>
+</ol>
+<h3>4-3. App Store Connect API キーを作る <span class="who me">あなた</span></h3>
+<p>CodemagicがあなたのかわりにAppleへ署名・アップロードするための「合鍵」です。</p>
+<ol class="steps">
+<li>App Store Connect → <span class="tap">ユーザとアクセス</span> → <span class="tap">統合</span>（Integrations）タブ → <span class="tap">App Store Connect API</span>。</li>
+<li>初回はアクセスをリクエスト／同意する。<span class="tap">チームキー</span> の <span class="tap">＋</span>（キーを生成）。</li>
+<li>名前：<code>Codemagic</code>、アクセス：<span class="tap">App Manager</span> → <span class="tap">生成</span>。</li>
+<li>画面に出る <b>Issuer ID</b> と <b>キーID</b> をメモアプリに控える。</li>
+<li><span class="tap">APIキーをダウンロード</span> で <code>.p8</code> ファイルを保存（iPhoneの「ファイル」アプリに保存される）。<b>ダウンロードは1回きり</b>なので、iCloud Driveなど安全な場所に保管。</li>
+</ol>
+<div class="box warn"><b class="h">秘密情報の扱い</b>.p8ファイル・Issuer ID・キーIDは<b>Claudeのチャットに貼らないでください</b>。Codemagicの画面にだけ入力します。</div>
+<h3>4-4. Codemagic にキーを登録 <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>Codemagic → 左メニュー <span class="tap">Teams</span>（個人なら <span class="tap">Personal Account</span>）→ <span class="tap">Integrations</span> → <span class="tap">Developer Portal</span> の <span class="tap">Connect</span>。</li>
+<li>API key name：<code>codemagic_asc</code>（Claudeが codemagic.yaml で指定する名前と同じにする）、Issuer ID・Key IDを入力、.p8ファイルを <span class="tap">Choose a .p8 file</span> で選ぶ → <span class="tap">Save</span>。</li>
+</ol>
+<h3>4-5. リポジトリを追加してビルド <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>Codemagic → <span class="tap">Apps</span> → <span class="tap">Add application</span> → GitHub → <code>okazaki0504/first</code> を選ぶ → プロジェクト種別は <span class="tap">Flutter App</span>。</li>
+<li>設定方法を聞かれたら <span class="tap">codemagic.yaml</span> を選ぶ（Claudeが作成済みの設定を使う）。</li>
+<li><span class="tap">Start new build</span> → ブランチ <code>claude/shindan-learning-app-r76up9</code> → ワークフロー <code>ios-testflight</code> → <span class="tap">Start new build</span>。</li>
+<li>10〜20分待つ。緑のチェックで成功。</li>
+<li><b>失敗したら</b>：ビルド画面の赤い行をタップ → ログ全文をコピー（または画面のスクリーンショット）→ Claudeのチャットに貼って「直して」と送る。Claudeが修正をpushしたら再度 <span class="tap">Start new build</span>。</li>
+</ol>
+
+<h2>5. テスト：自分のiPhoneで動かす（TestFlight）</h2>
+<ol class="steps">
+<li><span class="who me">あなた</span> App Storeで「<b>TestFlight</b>」（Apple公式）をインストール。</li>
+<li>App Store Connect → 対象アプリ → <span class="tap">TestFlight</span> タブ。ビルドが「処理中」→「テスト可能」になるまで待つ（10〜30分）。</li>
+<li>「輸出コンプライアンス」の質問が出たら <span class="tap">暗号化を使用しない（標準の暗号化のみ）</span> を選ぶ（通信をしないアプリのため。Claudeが設定ファイルで自動回答させることも可能）。</li>
+<li><span class="tap">内部テスト</span> の <span class="tap">＋</span> でグループを作り、自分（Apple ID）を追加。</li>
+<li>届いた招待メール、またはTestFlightアプリを開き <span class="tap">インストール</span>。ホーム画面からアプリを起動。</li>
+<li>使ってみて不具合や改善点をClaudeに送る → 修正 → Codemagicで再ビルド → TestFlightで自動更新、を繰り返す。</li>
+</ol>
+<div class="box tip"><b class="h">効率化</b>Claudeが codemagic.yaml に「ブランチにpushされたら自動ビルド」を設定すると、4-5の手動ビルドが不要になります。ただし無料枠の分数を消費するので、修正をまとめてからpushするよう依頼すると節約できます。</div>
+<h3>テストのチェックリスト</h3>
+<ul class="check">
+<li>初回起動〜試験日設定がわかりやすいか</li>
+<li>タイマーを動かしたまま画面ロック・他アプリに切り替えても時間が正しいか</li>
+<li>アプリを削除せずに更新しても、記録が消えないか</li>
+<li>一問一答を連続で解いて、レベルアップ・クエスト達成の演出が正しく出るか</li>
+<li>文字サイズを最大（設定→画面表示と明るさ→テキストサイズ）にしても崩れないか</li>
+<li>機内モードでもすべての機能が動くか</li>
+</ul>
+
+<h2>6. 販売：App Store に申請する</h2>
+<h3>6-1. Claudeに用意してもらうもの <span class="who cl">Claude</span></h3>
+<ul>
+<li>App Store用スクリーンショット（6.9インチ：1320×2868 など、App Store Connectが要求するサイズ）</li>
+<li>アプリ説明文・キーワード・サブタイトル案</li>
+<li>プライバシーポリシーのURL（GitHub Pagesで公開）とサポートURL</li>
+<li>アプリアイコン（1024×1024）</li>
+</ul>
+<h3>6-2. App Store Connect で入力 <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>対象アプリ → <span class="tap">App情報</span>：カテゴリ（例：教育）、コンテンツ配信権（第三者コンテンツなし）を設定。</li>
+<li><span class="tap">価格および配信状況</span>：価格を選ぶ（例：¥600〜¥1,200帯から選択）、配信国（まずは日本のみ推奨）。</li>
+<li><span class="tap">Appのプライバシー</span>：<span class="tap">データを収集しない</span> を選び公開。プライバシーポリシーURLを入力。</li>
+<li>左の「iOS App 1.0」→ スクリーンショットをアップロード、説明文・キーワード・サポートURLを貼り付け。</li>
+<li><span class="tap">ビルド</span> 欄の <span class="tap">＋</span> でTestFlightでテストしたビルドを選ぶ。</li>
+<li><span class="tap">年齢制限</span>：質問にすべて「なし」で回答（4+の見込み）。</li>
+<li>審査メモ：「ログイン不要。全機能オフラインで利用可能」と記載。</li>
+<li><span class="tap">審査用に追加</span> → <span class="tap">審査へ提出</span>。</li>
+<li>通常1〜2日で結果メール。「リジェクト」の場合は理由文をClaudeに貼れば対応案と修正を出します。</li>
+<li>「配信準備完了」になればApp Storeで販売開始。</li>
+</ol>
+<div class="box warn"><b class="h">審査で注意される可能性がある点</b>
+・「中小企業診断協会の公式アプリ」と誤解させる名称・説明はNG（「非公式」「独自問題」と明記）。<br>
+・「必ず合格」など根拠のない表現はNG。<br>
+・EUで配信する場合は「取引業者（Trader）」情報の公開が必要。最初は日本のみの配信が無難。</div>
+
+<h2>7. リリース後の運用</h2>
+<ul>
+<li><b>問題の追加・修正</b>：Claudeにデータ更新を依頼 → Codemagicでビルド → App Store Connectで新バージョン（1.0.1など）を作成して提出。</li>
+<li><b>試験日の更新</b>：毎年の試験日程の公表後に初期値を更新（ユーザーが自分で変更もできる設計）。</li>
+<li><b>レビューへの対応</b>：App Store Connectの <span class="tap">評価とレビュー</span> から返信できます。</li>
+<li><b>年会費</b>：Apple Developer Programは毎年更新。更新しないとアプリが販売停止になります。</li>
+</ul>
+
+<h2>8. 次にあなたがやること</h2>
+<ol class="steps">
+<li>1-2 Apple Developer Program の登録を始める（審査待ちの間に要件を詰めます）。</li>
+<li>モックをiPhoneで触り、Claudeからの次の質問に答える。</li>
+<li>1-4 Codemagicに GitHubでサインアップしておく。</li>
+</ol>
+</body></html>

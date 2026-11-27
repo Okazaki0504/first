@@ -1,0 +1,250 @@
+<title>診断士クエスト</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+1p:wght@400;700;800&display=swap">
+<style>
+/* Layout: 1 phone-sized game screen, HUD on top, scrolling content, tab bar fixed at bottom. Single dark "game world" theme by choice. */
+:root{
+  --night:#141a33;      /* 夜の空 = 背景 */
+  --panel:#1f2850;      /* ウィンドウ */
+  --panel-2:#2a3466;
+  --line:#e9e4cf;       /* RPGウィンドウ枠 */
+  --ink:#f3efe0;
+  --muted:#a7add0;
+  --gold:#f2c14e;       /* EXP・報酬 */
+  --hp:#ff6b6b;
+  --mp:#5ec8f2;
+  --ok:#7ee08a;
+  --f-pixel:"DotGothic16","M PLUS 1p",system-ui,sans-serif;
+  --f-body:"M PLUS 1p","Hiragino Sans",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--night);color:var(--ink);font-family:var(--f-body);font-size:14px;
+  background-image:radial-gradient(circle at 20% 10%,#24305f 0,transparent 40%),radial-gradient(circle at 80% 70%,#1d2550 0,transparent 45%);}
+.app{max-width:430px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:96px}
+.mock-tag{font-family:var(--f-pixel);font-size:11px;color:var(--night);background:var(--gold);padding:2px 8px;border-radius:2px;align-self:flex-start;margin-top:10px;letter-spacing:.05em}
+/* RPG window */
+.win{background:var(--panel);border:3px solid var(--line);border-radius:6px;box-shadow:0 0 0 3px var(--night),0 0 0 5px #3b4683;padding:12px 14px}
+.win h2{font-family:var(--f-pixel);font-weight:400;font-size:15px;margin:0 0 8px;color:var(--gold);letter-spacing:.04em}
+.stack{display:flex;flex-direction:column;gap:16px;margin-top:14px}
+.pix{font-family:var(--f-pixel)}
+/* HUD */
+.hud{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center}
+.avatar{width:64px;height:64px;background:var(--panel-2);border:2px solid var(--line);border-radius:4px;display:grid;place-items:center}
+.hud .name{font-family:var(--f-pixel);font-size:16px;display:flex;justify-content:space-between;gap:6px}
+.hud .job{font-size:11px;color:var(--muted)}
+.bar{height:10px;background:#0c1024;border:1px solid #4a5590;border-radius:2px;overflow:hidden;margin-top:4px}
+.bar>i{display:block;height:100%;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar.exp>i{background:linear-gradient(90deg,#d9a52e,var(--gold))}
+.bar.hp>i{background:var(--hp)}
+.bar.mp>i{background:var(--mp)}
+.barlabel{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{font-family:var(--f-pixel);font-size:12px;background:#0f1430;border:1px solid #4a5590;border-radius:3px;padding:4px 8px}
+.chip b{color:var(--gold);font-weight:400}
+/* quests */
+.quest{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;padding:8px 0;border-top:1px dashed #4a5590}
+.quest:first-of-type{border-top:0}
+.quest .box{width:18px;height:18px;border:2px solid var(--line);border-radius:2px;display:grid;place-items:center;font-size:12px;color:var(--night)}
+.quest.done .box{background:var(--ok);border-color:var(--ok)}
+.quest.done .qt{color:var(--muted);text-decoration:line-through}
+.quest .rw{font-family:var(--f-pixel);font-size:11px;color:var(--gold)}
+/* dungeons */
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dg{background:#0f1430;border:1px solid #4a5590;border-radius:4px;padding:8px;text-align:left;color:var(--ink);font:inherit;cursor:pointer}
+.dg:hover,.dg:focus-visible{border-color:var(--gold);outline:none}
+.dg .t{font-size:12px;font-weight:700;line-height:1.3;min-height:2.6em}
+.dg .lv{font-family:var(--f-pixel);font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+.seg{display:flex;gap:6px;margin-bottom:10px}
+.seg button{flex:1;font-family:var(--f-pixel);font-size:13px;background:#0f1430;color:var(--muted);border:1px solid #4a5590;border-radius:3px;padding:6px}
+.seg button[aria-pressed="true"]{background:var(--gold);color:var(--night);border-color:var(--gold)}
+/* battle */
+.arena{position:relative;height:170px;border:3px solid var(--line);border-radius:6px;overflow:hidden;
+  background:linear-gradient(#2b2f6b 0 55%,#3a3a55 55% 100%);display:grid;place-items:center}
+.arena .mon{image-rendering:pixelated;transition:transform .15s}
+.arena .mon.hit{animation:hit .4s}
+@keyframes hit{0%,100%{transform:translateX(0);filter:none}25%{transform:translateX(-8px);filter:brightness(3)}75%{transform:translateX(8px)}}
+.arena .dmg{position:absolute;top:30%;font-family:var(--f-pixel);font-size:26px;color:var(--gold);text-shadow:2px 2px 0 #000;opacity:0}
+.arena .dmg.show{animation:pop .9s}
+@keyframes pop{0%{opacity:0;transform:translateY(10px)}20%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}
+.monhp{position:absolute;top:8px;left:10px;right:10px}
+.monhp .barlabel{color:var(--ink)}
+.msg{font-family:var(--f-pixel);font-size:14px;line-height:1.7;min-height:4.4em}
+.choices{display:grid;gap:8px;margin-top:8px}
+.choice{text-align:left;background:#0f1430;color:var(--ink);border:2px solid #4a5590;border-radius:4px;padding:10px 12px;font:inherit;font-size:13px;cursor:pointer;line-height:1.45}
+.choice:hover:not(:disabled),.choice:focus-visible{border-color:var(--gold);outline:none}
+.choice.right{border-color:var(--ok);background:#173a2a}
+.choice.wrong{border-color:var(--hp);background:#3a1a24}
+.btn{font-family:var(--f-pixel);font-size:15px;background:var(--gold);color:var(--night);border:0;border-radius:4px;padding:12px;width:100%;cursor:pointer;box-shadow:0 4px 0 #a37c1f}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 #a37c1f}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line);box-shadow:none}
+.explain{font-size:12px;color:var(--muted);line-height:1.6;margin-top:8px;border-left:3px solid var(--gold);padding-left:8px}
+/* timer */
+.timer{font-family:var(--f-pixel);font-size:54px;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:.04em;margin:6px 0}
+select,input[type=date]{width:100%;background:#0f1430;color:var(--ink);border:1px solid #4a5590;border-radius:4px;padding:8px;font:inherit}
+label.f{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
+/* records */
+.chart{display:flex;align-items:flex-end;gap:8px;height:130px;padding-top:10px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.chart .col i{width:100%;background:var(--mp);border-radius:2px 2px 0 0;min-height:2px}
+.chart .col.today i{background:var(--gold)}
+.chart .col span{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+.kakomon{overflow-x:auto}
+.kakomon table{border-collapse:collapse;font-size:11px;font-variant-numeric:tabular-nums}
+.kakomon th,.kakomon td{border:1px solid #3b4683;width:26px;height:26px;text-align:center;padding:0}
+.kakomon th{color:var(--muted);font-weight:400;background:#0f1430}
+.kakomon td button{width:100%;height:100%;background:none;border:0;color:var(--ink);font:inherit;cursor:pointer}
+.kakomon td.o{background:#173a2a}.kakomon td.x{background:#3a1a24}.kakomon td.t{background:#3a331a}
+.legend{font-size:11px;color:var(--muted);margin-top:6px}
+.note{font-size:11px;color:var(--muted);line-height:1.6}
+/* tabbar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;background:#0c1024;border-top:3px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);z-index:5}
+.tabbar nav{max-width:430px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.tabbar button{background:none;border:0;color:var(--muted);font-family:var(--f-pixel);font-size:11px;padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.tabbar button svg{width:22px;height:22px}
+.tabbar button[aria-current="page"]{color:var(--gold)}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translateX(-50%) translateY(-120%);background:var(--panel);border:3px solid var(--gold);border-radius:6px;padding:10px 16px;font-family:var(--f-pixel);font-size:14px;z-index:9;transition:transform .35s;max-width:90vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.lvup{position:fixed;inset:0;background:rgba(8,10,25,.85);display:grid;place-items:center;z-index:10}
+.lvup .win{text-align:center;max-width:300px}
+.lvup .big{font-family:var(--f-pixel);font-size:34px;color:var(--gold);margin:6px 0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="app">
+  <span class="mock-tag">MOCK v0.1 ・ 画面イメージ確認用</span>
+  <main id="view" class="stack"></main>
+</div>
+
+<div class="tabbar"><nav id="tabs"></nav></div>
+<div class="toast" id="toast" role="status"></div>
+<div class="lvup" id="lvup" hidden><div class="win"><div class="pix">LEVEL UP!</div><div class="big" id="lvupN">Lv 2</div><div class="note" id="lvupT">新しい称号を手に入れた</div><div style="margin-top:12px"><button class="btn" id="lvupOk">つづける</button></div></div></div>
+
+<script>
+// ---------- data ----------
+const SUBJ1=[
+ {id:"eco",n:"経済学・経済政策"},{id:"fin",n:"財務・会計"},{id:"mgt",n:"企業経営理論"},{id:"ops",n:"運営管理"},
+ {id:"law",n:"経営法務"},{id:"it",n:"経営情報システム"},{id:"sme",n:"中小企業経営・政策"}];
+const SUBJ2=[{id:"c1",n:"事例I 組織・人事"},{id:"c2",n:"事例II マーケティング"},{id:"c3",n:"事例III 生産・技術"},{id:"c4",n:"事例IV 財務・会計"}];
+const MON={eco:"需給の霧",fin:"簿記ゴーレム",mgt:"戦略の亡霊",ops:"在庫スライム",law:"条文ナイト",it:"バグ蝙蝠",sme:"白書の番人",c1:"組織の迷宮",c2:"売場の魔女",c3:"工程の竜",c4:"CF竜王"};
+// サンプル一問一答（オリジナル問題。本番では各科目100問をClaudeが作成→あなたが検証）
+const QS=[
+ {s:"eco",q:"需要の価格弾力性が1より大きい財の価格を引き下げると、企業の総収入はどうなる？",c:["増加する","減少する","変わらない","価格弾力性とは無関係"],a:0,e:"弾力的な財は、値下げ率以上に需要量が増えるため総収入は増加します。"},
+ {s:"fin",q:"固定費400万円、変動費率60%の会社の損益分岐点売上高は？",c:["640万円","1,000万円","667万円","240万円"],a:1,e:"損益分岐点売上高 = 固定費 ÷ 限界利益率 = 400 ÷ (1−0.6) = 1,000万円。"},
+ {s:"mgt",q:"PPMで「市場成長率が高く、相対的市場シェアが低い」事業は？",c:["花形","金のなる木","問題児","負け犬"],a:2,e:"問題児は資金流出が大きく、育成か撤退かの判断が必要な事業です。"},
+ {s:"ops",q:"重点管理のために品目を売上高などの多い順に並べ、A・B・Cに区分する手法は？",c:["ABC分析","PERT","ECRS","SLP"],a:0,e:"ABC分析（パレート分析）は少数の重要品目を重点管理する考え方です。"},
+ {s:"law",q:"会社法上、公開会社の取締役の任期は原則として何年？（選任後○年以内に終了する事業年度のうち最終のものに関する定時株主総会の終結時まで）",c:["1年","2年","4年","10年"],a:1,e:"原則2年。非公開会社は定款で10年まで伸長できます。"},
+ {s:"it",q:"関係データベースで、表の各行を一意に識別するための列（の組合せ）を何という？",c:["外部キー","主キー","インデックス","ビュー"],a:1,e:"主キーは重複不可・NULL不可で、行を一意に識別します。"},
+ {s:"sme",q:"中小企業基本法における製造業の中小企業者の定義は？",c:["資本金1億円以下 又は 従業員100人以下","資本金3億円以下 又は 従業員300人以下","資本金5千万円以下 又は 従業員50人以下","資本金3億円以下 かつ 従業員300人以下"],a:1,e:"製造業その他は「3億円以下 又は 300人以下」。「又は」がポイントです。"},
+ {s:"c4",q:"ROE（自己資本利益率）を求める式は？",c:["当期純利益 ÷ 総資本","営業利益 ÷ 売上高","当期純利益 ÷ 自己資本","経常利益 ÷ 自己資本"],a:2,e:"ROE = 当期純利益 ÷ 自己資本。デュポン分解で売上高純利益率×総資本回転率×財務レバレッジ。"},
+ {s:"c2",q:"2次試験 事例IIで頻出の「誰に・何を・どのように・効果」のうち、「誰に」にあたるのは？",c:["ターゲット顧客","販売チャネル","商品コンセプト","期待される売上"],a:0,e:"助言問題は「ターゲット・商品・手段・効果」を盛り込むと得点要素を拾いやすくなります。"},
+];
+const TITLES=["見習い診断士","駆け出しの冒険者","論点ハンター","過去問の騎士","白書の賢者","ストレート合格の勇者"];
+
+// ---------- state (例データで開始。ブラウザ内のみに保存) ----------
+const DEF={lv:3,exp:140,streak:12,gold:860,hp:80,today:35,week:[90,45,120,0,75,60,35],
+  quests:[{t:"一問一答バトルで5問正解",r:"EXP+30",d:false,k:"q5"},{t:"修行（学習）を30分",r:"EXP+40",d:true,k:"t30"},{t:"過去問を1年分記録",r:"GOLD+50",d:false,k:"km"}],
+  dlv:{eco:4,fin:6,mgt:3,ops:2,law:1,it:5,sme:2,c1:1,c2:1,c3:0,c4:2},exam1:"2027-08-07",exam2:"2027-10-24",win:0,km:{}};
+let S;try{S=JSON.parse(localStorage.getItem("sq-mock"))||structuredClone(DEF)}catch(e){S=structuredClone(DEF)}
+const save=()=>{try{localStorage.setItem("sq-mock",JSON.stringify(S))}catch(e){}};
+const need=lv=>100+lv*40;
+
+// ---------- pixel sprites ----------
+const SPR={
+ slime:["....1111....","..11222211..",".1222222221.","122322223221","122332233221","122222222221","122244442221","122222222221",".1222222221.","..11111111.."],
+ hero:["...1111...","..122221..","..1d33d1..","..133331..","...1331...",".11444411.","1.144441.1","..144441..","..15..51..","..11..11.."],
+};
+function sprite(map,pal,px){const h=map.length,w=map[0].length;let r="";map.forEach((row,y)=>[...row].forEach((c,x)=>{if(c!==".")r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${pal[c]}"/>`}));
+ return `<svg viewBox="0 0 ${w} ${h}" width="${w*px}" height="${h*px}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`}
+const heroSvg=()=>sprite(SPR.hero,{1:"#141a33",2:"#5ec8f2",3:"#f5d6b4",d:"#141a33",4:"#3f5fd1",5:"#141a33"},5);
+const monColors={eco:"#9ad0ff",fin:"#c9a26b",mgt:"#b48cff",ops:"#7ee08a",law:"#ff9f6b",it:"#6bd3c9",sme:"#f2c14e",c1:"#e58cc0",c2:"#ff7aa8",c3:"#ff6b6b",c4:"#f2c14e"};
+const monSvg=s=>sprite(SPR.slime,{1:"#0c1024",2:monColors[s]||"#7ee08a",3:"#ffffff",4:"#0c1024"},9);
+
+// ---------- helpers ----------
+const $=s=>document.querySelector(s);
+const days=d=>Math.max(0,Math.ceil((new Date(d)-new Date(new Date().toDateString()))/864e5));
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),1800)}
+function gainExp(n,why){S.exp+=n;toast(`${why}  EXP +${n}`);while(S.exp>=need(S.lv)){S.exp-=need(S.lv);S.lv++;
+  $("#lvupN").textContent="Lv "+S.lv;$("#lvupT").textContent="称号「"+TITLES[Math.min(TITLES.length-1,Math.floor(S.lv/3))]+"」";$("#lvup").hidden=false}save()}
+function doneQuest(k){const q=S.quests.find(q=>q.k===k);if(q&&!q.d){q.d=true;setTimeout(()=>toast("クエスト達成！ "+q.r),1900)}}
+$("#lvupOk").onclick=()=>{$("#lvup").hidden=true;render()};
+
+// ---------- views ----------
+const TABS=[["home","拠点","M3 11l9-7 9 7v9h-6v-6H9v6H3z"],["battle","バトル","M5 19L19 5M15 5h4v4M5 15l4 4M3 21l3-3"],["train","修行","M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"],["log","記録","M4 20V10M10 20V4M16 20v-7M22 20H2"],["book","冒険の書","M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11"]];
+let tab="home",seg=1,battle=null,timer={on:false,sec:0,id:null,subj:"fin"};
+function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,l,d])=>`<button data-k="${k}" ${tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="${d}"/></svg>${l}</button>`).join("");
+ document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.k;render();scrollTo(0,0)})}
+
+function hud(){const t=TITLES[Math.min(TITLES.length-1,Math.floor(S.lv/3))];
+ return `<section class="win"><div class="hud"><div class="avatar">${heroSvg()}</div><div>
+  <div class="name"><span>受験者</span><span>Lv ${S.lv}</span></div><div class="job">称号：${t}</div>
+  <div class="bar exp"><i style="width:${S.exp/need(S.lv)*100}%"></i></div><div class="barlabel"><span>EXP</span><span>${S.exp} / ${need(S.lv)}</span></div></div></div>
+  <div class="chips"><span class="chip">連続 <b>${S.streak}</b> 日</span><span class="chip">GOLD <b>${S.gold}</b></span><span class="chip">1次まで <b>${days(S.exam1)}</b> 日</span></div></section>`}
+
+function vHome(){const subs=seg===1?SUBJ1:SUBJ2;
+ return hud()+`<section class="win"><h2>▶ 本日のクエスト</h2>${S.quests.map(q=>`<div class="quest ${q.d?"done":""}"><span class="box">${q.d?"✓":""}</span><span class="qt">${q.t}</span><span class="rw">${q.r}</span></div>`).join("")}
+ <p class="note" style="margin:8px 0 0">クエストは毎朝更新。全達成でボーナス宝箱。</p></section>
+ <section class="win"><h2>▶ ダンジョン（科目）</h2><div class="seg"><button data-s="1" aria-pressed="${seg===1}">1次 7科目</button><button data-s="2" aria-pressed="${seg===2}">2次 4事例</button></div>
+ <div class="dgrid">${subs.map(s=>{const lv=S.dlv[s.id]||0;return `<button class="dg" data-id="${s.id}"><div class="t">${s.n}</div><div class="lv"><span>B${lv}F / 10F</span><span>${lv*10}%</span></div><div class="bar mp"><i style="width:${lv*10}%"></i></div></button>`}).join("")}</div>
+ <p class="note" style="margin:8px 0 0">階層 = 一問一答の正答数で進む習熟度。タップでその科目のバトルへ。</p></section>`}
+
+function newBattle(s){const pool=QS.filter(q=>!s||q.s===s);const q=pool[Math.floor(Math.random()*pool.length)]||QS[0];
+ battle={q,ans:null,mhp:battle&&battle.q.s===q.s&&battle.mhp>0?battle.mhp:100,filter:s||null}}
+function vBattle(){if(!battle)newBattle();const b=battle,q=b.q,sn=[...SUBJ1,...SUBJ2].find(x=>x.id===q.s).n;
+ return `<section><div class="arena"><div class="monhp"><div class="barlabel"><span class="pix">${MON[q.s]}</span><span>HP ${b.mhp}</span></div><div class="bar hp"><i style="width:${b.mhp}%"></i></div></div>
+ <div class="mon" id="mon">${monSvg(q.s)}</div><div class="dmg" id="dmg">-25</div></div></section>
+ <section class="win"><div class="note">${sn}　連続正解 ${S.win}</div><div class="msg">${q.q}</div>
+ <div class="choices">${q.c.map((c,i)=>`<button class="choice ${b.ans!==null?(i===q.a?"right":i===b.ans?"wrong":""):""}" data-i="${i}" ${b.ans!==null?"disabled":""}>${"ABCD"[i]}．${c}</button>`).join("")}</div>
+ ${b.ans!==null?`<div class="explain">${b.ans===q.a?"会心の一撃！":"ダメージを受けた…"}　${q.e}</div><div style="margin-top:12px;display:grid;gap:8px"><button class="btn" id="next">${b.mhp<=0?"宝箱をあける":"つぎの問題へ"}</button></div>`:""}
+ </section><p class="note">モックでは各科目1問のサンプル。製品版は1次・2次の各科目約100問、間違えた問題は「復習の塔」に自動で積まれます。</p>`}
+
+function vTrain(){const all=[...SUBJ1,...SUBJ2];const mm=String(Math.floor(timer.sec/60)).padStart(2,"0"),ss=String(timer.sec%60).padStart(2,"0");
+ return hud()+`<section class="win"><h2>▶ 修行の間（学習タイマー）</h2><label class="f" for="tsubj">修行する科目</label>
+ <select id="tsubj">${all.map(s=>`<option value="${s.id}" ${timer.subj===s.id?"selected":""}>${s.n}</option>`).join("")}</select>
+ <div class="timer" id="tclock">${mm}:${ss}</div><div style="display:grid;gap:8px"><button class="btn" id="tbtn">${timer.on?"いったん休む":"修行をはじめる"}</button>
+ <button class="btn ghost" id="tend">修行をおえる（記録する）</button></div>
+ <p class="note">1分 = EXP 2。モックでは1秒を1分として早送りします。今日の修行：${S.today}分</p></section>`}
+
+function vLog(){const mx=Math.max(...S.week,60),lbl=["月","火","水","木","金","土","日"];const tot=S.week.reduce((a,b)=>a+b,0);
+ const years=["R7","R6","R5","R4","R3"];
+ return `<section class="win"><h2>▶ 今週の修行記録</h2><div class="chips" style="margin:0 0 4px"><span class="chip">合計 <b>${Math.floor(tot/60)}時間${tot%60}分</b></span><span class="chip">目標 <b>15時間</b></span></div>
+ <div class="chart">${S.week.map((m,i)=>`<div class="col ${i===6?"today":""}"><span>${m}</span><i style="height:${m/mx*100}%"></i><span>${lbl[i]}</span></div>`).join("")}</div></section>
+ <section class="win"><h2>▶ 過去問の戦績（財務・会計）</h2><div class="kakomon"><table><tr><th></th>${Array.from({length:12},(_,i)=>`<th>${i+1}</th>`).join("")}</tr>
+ ${years.map(y=>`<tr><th>${y}</th>${Array.from({length:12},(_,i)=>{const k=y+"-"+i;const v=S.km[k]??(((y.charCodeAt(1)+i)%5===0)?"x":((y.charCodeAt(1)*i)%3===0?"o":""));return `<td class="${v}"><button data-k="${k}" aria-label="${y} 第${i+1}問">${v==="o"?"○":v==="x"?"×":v==="t"?"△":""}</button></td>`}).join("")}</tr>`).join("")}</table></div>
+ <p class="legend">マスをタップ：○→△→×→空 の順に切替。問題文は載せず、手元の過去問題集と照らして記録します。</p></section>
+ <section class="win"><h2>▶ 苦手論点（自動抽出・例）</h2><div class="quest"><span class="box" style="background:var(--hp);border-color:var(--hp)"></span><span>財務・会計：キャッシュフロー計算書</span><span class="rw">正答率32%</span></div>
+ <div class="quest"><span class="box" style="background:var(--gold);border-color:var(--gold)"></span><span>経営法務：知的財産権</span><span class="rw">正答率48%</span></div></section>`}
+
+function vBook(){return `<section class="win"><h2>▶ 冒険の書（設定・計画）</h2>
+ <label class="f" for="e1">1次試験日（仮）</label><input type="date" id="e1" value="${S.exam1}">
+ <label class="f" for="e2">2次試験日（仮）</label><input type="date" id="e2" value="${S.exam2}">
+ <label class="f" for="goal">週の目標修行時間</label><select id="goal"><option>10時間</option><option selected>15時間</option><option>20時間</option></select>
+ <div class="chips"><span class="chip">1次まで <b>${days(S.exam1)}</b>日</span><span class="chip">2次まで <b>${days(S.exam2)}</b>日</span></div></section>
+ <section class="win"><h2>▶ 逆算プラン（自動）</h2>
+ ${[["今〜3月","財務・会計／経済学で基礎体力"],["4月〜6月","暗記系（法務・情報・中小）を周回"],["7月","過去問5年分×7科目の総仕上げ"],["8月〜10月","2次 事例I〜IVを週2事例"]].map(([a,b])=>`<div class="quest"><span class="box"></span><span><b class="pix" style="font-weight:400;color:var(--gold)">${a}</b><br>${b}</span><span></span></div>`).join("")}
+ </section><section class="win"><h2>▶ セーブデータ</h2><p class="note">データはこの端末の中だけに保存（サーバー送信なし）。</p><button class="btn ghost" id="reset">モックを初期状態にもどす</button></section>`}
+
+function render(){renderTabs();const v=$("#view");v.innerHTML={home:vHome,battle:vBattle,train:vTrain,log:vLog,book:vBook}[tab]();bind()}
+function bind(){
+ document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{seg=+b.dataset.s;render()});
+ document.querySelectorAll(".dg").forEach(b=>b.onclick=()=>{const has=QS.some(q=>q.s===b.dataset.id);newBattle(has?b.dataset.id:null);if(!has)toast("この科目のサンプル問題は製品版で");tab="battle";render()});
+ document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{const i=+b.dataset.i,bt=battle;bt.ans=i;
+  if(i===bt.q.a){bt.mhp=Math.max(0,bt.mhp-25);S.win++;S.dlv[bt.q.s]=Math.min(10,(S.dlv[bt.q.s]||0)+(S.win%3===0?1:0));render();
+   const m=$("#mon"),d=$("#dmg");m.classList.add("hit");d.classList.add("show");gainExp(15,"正解！");if(S.win>=5)doneQuest("q5");}
+  else{S.win=0;S.hp=Math.max(0,S.hp-10);save();render();}});
+ const nx=$("#next");if(nx)nx.onclick=()=>{if(battle.mhp<=0){S.gold+=40;toast(MON[battle.q.s]+"をたおした！ GOLD +40");battle.mhp=100}newBattle(battle.filter);save();render()};
+ const ts=$("#tsubj");if(ts)ts.onchange=()=>timer.subj=ts.value;
+ const tb=$("#tbtn");if(tb)tb.onclick=()=>{timer.on=!timer.on;if(timer.on){timer.id=setInterval(()=>{timer.sec+=60;const c=$("#tclock");if(c)c.textContent=String(Math.floor(timer.sec/60)).padStart(2,"0")+":00"},1000)}else clearInterval(timer.id);render()};
+ const te=$("#tend");if(te)te.onclick=()=>{clearInterval(timer.id);timer.on=false;const m=Math.floor(timer.sec/60);if(m<1){toast("まだ修行していないようだ");return}
+  S.today+=m;S.week[6]+=m;timer.sec=0;if(S.today>=30)doneQuest("t30");gainExp(m*2,m+"分の修行を記録");render()};
+ document.querySelectorAll(".kakomon button").forEach(b=>b.onclick=()=>{const td=b.parentElement,cur=td.className,nx={"":"o",o:"t",t:"x",x:""}[cur]??"o";S.km[b.dataset.k]=nx;
+  if(Object.keys(S.km).length>=12)doneQuest("km");save();render()});
+ ["e1","e2"].forEach(id=>{const el=$("#"+id);if(el)el.onchange=()=>{S[id==="e1"?"exam1":"exam2"]=el.value;save();render()}});
+ const rs=$("#reset");if(rs)rs.onclick=()=>{S=structuredClone(DEF);battle=null;save();render();toast("初期状態にもどした")};
+}
+render();
+</script>
