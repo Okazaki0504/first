@@ -24,7 +24,14 @@ class RpgWindow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (title != null) ...[Text('▶\uFE0E $title', style: px(15, color: C.gold)), const SizedBox(height: 8)],
+          if (title != null) ...[
+            Row(children: [
+              const Icon(Icons.play_arrow_rounded, color: C.gold, size: 18),
+              const SizedBox(width: 4),
+              Expanded(child: Text(title!, style: px(15, color: C.gold))),
+            ]),
+            const SizedBox(height: 8),
+          ],
           child,
         ],
       ),

@@ -702,7 +702,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         const SizedBox(height: 12),
         Text(stories[step], style: px(15).copyWith(height: 1.8)),
         const SizedBox(height: 16),
-        GoldButton('▶\uFE0E つづける', onPressed: _next),
+        GoldButton('つづける', onPressed: _next),
       ]);
     } else if (step == stories.length) {
       body = _choices('どの試験に挑む？', ['1次試験から', '2次試験のみ', '1次・2次ストレート'], (i) => target = i);

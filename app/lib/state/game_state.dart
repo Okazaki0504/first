@@ -57,6 +57,10 @@ class GameState extends ChangeNotifier {
     }
     _rollover();
     streak = normalizeStreak(streak, lastActive, this.clock());
+    // 前回の終了時点で条件を満たしていたクエストを反映する（報酬は起動時に付与）
+    final r = Reward();
+    _checkQuests(r);
+    if (!r.isEmpty) save();
   }
 
   // ---- 設定 ----
