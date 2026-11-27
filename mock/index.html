@@ -1,4 +1,4 @@
-<title>診断士クエスト</title>
+<title>中小企業診断士 学習アプリ</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+1p:wght@400;700;800&display=swap">
@@ -117,12 +117,13 @@ label.f{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
 </style>
 
 <div class="app">
-  <span class="mock-tag">MOCK v0.2 ・ 画面イメージ確認用</span>
+  <span class="mock-tag">MOCK v0.3 ・ 中小企業診断士 学習アプリ ─ 学習管理×一問一答</span>
   <main id="view" class="stack"></main>
 </div>
 
 <div class="tabbar"><nav id="tabs"></nav></div>
 <div class="toast" id="toast" role="status"></div>
+<div class="lvup" id="onb" hidden><div class="win" style="max-width:340px;width:calc(100% - 32px);text-align:left" id="onbBody"></div></div>
 <div class="lvup" id="lvup" hidden><div class="win"><div class="pix">LEVEL UP!</div><div class="big" id="lvupN">Lv 2</div><div class="note" id="lvupT">新しい称号を手に入れた</div><div style="margin-top:12px"><button class="btn" id="lvupOk">つづける</button></div></div></div>
 
 <script>
@@ -155,8 +156,8 @@ const TITLES=["見習い診断士","駆け出しの冒険者","論点ハンタ�
 const DEF={lv:3,exp:140,streak:12,gold:860,hp:80,today:35,week:[90,45,120,0,75,60,35],
   quests:[{t:"一問一答バトルで5問正解",r:"EXP+30",d:false,k:"q5"},{t:"修行（学習）を30分",r:"EXP+40",d:true,k:"t30"},{t:"過去問を1年分記録",r:"GOLD+50",d:false,k:"km"}],
   dlv:{eco:4,fin:6,mgt:3,ops:2,law:1,it:5,sme:2,c1:1,c2:1,c3:0,c4:2},exam1:"2027-08-07",exam2:"2027-10-24",win:0,km:{},notif:true,ntime:"20:30"};
-let S;try{S=JSON.parse(localStorage.getItem("sq-mock2"))||structuredClone(DEF)}catch(e){S=structuredClone(DEF)}
-const save=()=>{try{localStorage.setItem("sq-mock2",JSON.stringify(S))}catch(e){}};
+let S;try{S=JSON.parse(localStorage.getItem("sq-mock3"))||structuredClone(DEF)}catch(e){S=structuredClone(DEF)}
+const save=()=>{try{localStorage.setItem("sq-mock3",JSON.stringify(S))}catch(e){}};
 // 拠点の成長（累計GOLDで自動。GOLDは消費しない）
 const STAGES=[{n:"はじまりの村",g:0},{n:"にぎわいの街",g:1000},{n:"合格の城",g:3000}];
 const stageOf=g=>STAGES.reduce((a,s,i)=>g>=s.g?i:a,0);
@@ -208,6 +209,8 @@ function vHome(){const subs=seg===1?SUBJ1:SUBJ2;
  return hud()+`<section class="win"><h2>▶ 拠点：${STAGES[st].n}</h2>${baseSvg(st)}
  ${nx?`<div class="bar exp" style="margin-top:8px"><i style="width:${(S.gold-STAGES[st].g)/(nx.g-STAGES[st].g)*100}%"></i></div><div class="barlabel"><span>次は「${nx.n}」</span><span>あと ${nx.g-S.gold} GOLD</span></div>`:`<p class="note">最終段階に到達！</p>`}
  <p class="note" style="margin:6px 0 0">GOLDは使わずにたまる一方のスコア。累計に応じて拠点が村→街→城と育ちます。</p></section>
+ <section class="win"><h2>▶ 復習の塔</h2><p style="margin:0 0 8px">今日の復習：<b class="pix" style="color:var(--hp);font-weight:400">8問</b>（1日後 5・3日後 2・7日後 1）</p>
+ <button class="btn" id="tower">塔にのぼる</button><p class="note" style="margin:6px 0 0">間違えた問題は、忘れかけるタイミング（1→3→7→14日後）で自動出題。3回連続正解で塔から卒業します。</p></section>
  <section class="win"><h2>▶ 本日のクエスト</h2>${S.quests.map(q=>`<div class="quest ${q.d?"done":""}"><span class="box">${q.d?"✓":""}</span><span class="qt">${q.t}</span><span class="rw">${q.r}</span></div>`).join("")}
  <p class="note" style="margin:8px 0 0">クエストは毎朝更新。全達成でボーナス宝箱。</p></section>
  <section class="win"><h2>▶ ダンジョン（科目）</h2><div class="seg"><button data-s="1" aria-pressed="${seg===1}">1次 7科目</button><button data-s="2" aria-pressed="${seg===2}">2次 4事例</button></div>
@@ -259,7 +262,11 @@ function vBook(){return `<section class="win"><h2>▶ 冒険の書（設定・�
  <p class="note">例：「勇者よ、今日のクエストが3つ待っている！（連続12日目）」と端末内から通知。サーバー不要。</p></section>
  <section class="win"><h2>▶ 逆算プラン（自動）</h2>
  ${[["今〜3月","財務・会計／経済学で基礎体力"],["4月〜6月","暗記系（法務・情報・中小）を周回"],["7月","過去問5年分×7科目の総仕上げ"],["8月〜10月","2次 事例I〜IVを週2事例"]].map(([a,b])=>`<div class="quest"><span class="box"></span><span><b class="pix" style="font-weight:400;color:var(--gold)">${a}</b><br>${b}</span><span></span></div>`).join("")}
- </section><section class="win"><h2>▶ セーブデータ</h2><p class="note">データはこの端末の中だけに保存（サーバー送信なし）。</p><button class="btn ghost" id="reset">モックを初期状態にもどす</button></section>`}
+ </section><section class="win"><h2>▶ 演出</h2>
+ <label class="f" style="display:flex;justify-content:space-between;align-items:center"><span>振動（正解・レベルアップ時）</span><input type="checkbox" checked></label>
+ <p class="note">効果音・BGMはなし。電車の中でも使えます。</p>
+ <div style="margin-top:8px"><button class="btn ghost" id="replayOnb">はじめの物語をもう一度見る</button></div></section>
+ <section class="win"><h2>▶ セーブデータ</h2><p class="note">データはこの端末の中だけに保存（サーバー送信なし）。</p><button class="btn ghost" id="reset">モックを初期状態にもどす</button></section>`}
 
 function render(){renderTabs();const v=$("#view");v.innerHTML={home:vHome,battle:vBattle,train:vTrain,log:vLog,book:vBook}[tab]();bind()}
 function bind(){
@@ -283,7 +290,30 @@ function bind(){
  document.querySelectorAll(".kakomon button").forEach(b=>b.onclick=()=>{const td=b.parentElement,cur=td.className,nx={"":"o",o:"t",t:"x",x:""}[cur]??"o";S.km[b.dataset.k]=nx;
   if(Object.keys(S.km).length>=12)doneQuest("km");save();render()});
  ["e1","e2"].forEach(id=>{const el=$("#"+id);if(el)el.onchange=()=>{S[id==="e1"?"exam1":"exam2"]=el.value;save();render()}});
+ const ro=$("#replayOnb");if(ro)ro.onclick=showOnb;
+ const tw=$("#tower");if(tw)tw.onclick=()=>{newBattle("fin");tab="battle";render();toast("復習の塔：今日の復習 8問")};
  const rs=$("#reset");if(rs)rs.onclick=()=>{S=structuredClone(DEF);battle=null;save();render();toast("初期状態にもどした")};
 }
+// ---------- 初回起動（物語＋設定3問） ----------
+const ONB=[
+ {story:"ここは「中小企業の国」。\n多くの会社が、経営の悩みという霧に包まれている。"},
+ {story:"霧を晴らせるのは、7つのダンジョンと4つの試練を越えた者――\n「中小企業診断士」だけだという。"},
+ {story:"君はいま、はじまりの村に立っている。\n冒険の準備をしよう。"},
+ {q:"どの試験に挑む？",k:"target",o:["1次試験から","2次試験のみ","1次・2次ストレート"]},
+ {q:"試験日（仮）はいつ？",k:"date"},
+ {q:"1週間の目標修行時間は？",k:"goal",o:["5時間","10時間","15時間","20時間"]},
+];
+let onbI=0;
+function showOnb(){onbI=0;$("#onb").hidden=false;drawOnb()}
+function drawOnb(){const st=ONB[onbI],last=onbI===ONB.length-1;let h=`<div class="note pix">${onbI+1} / ${ONB.length}</div>`;
+ if(st.story)h+=`<div style="margin:6px 0 10px">${heroSvg()}</div><p class="msg" style="white-space:pre-line">${st.story}</p><button class="btn" id="onbNext">▶ つづける</button>`;
+ else{h+=`<h2 style="margin-top:6px">${st.q}</h2>`;
+  if(st.k==="date")h+=`<input type="date" id="onbDate" value="${S.exam1}"><p class="note">あとで「冒険の書」から変更できます。</p><div style="margin-top:10px"><button class="btn" id="onbNext">けってい</button></div>`;
+  else h+=`<div class="choices">${st.o.map((o,i)=>`<button class="choice" data-o="${i}">${o}</button>`).join("")}</div>`}
+ $("#onbBody").innerHTML=h;
+ const nx=$("#onbNext");if(nx)nx.onclick=()=>{const d=$("#onbDate");if(d){S.exam1=d.value;save()}step()};
+ document.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>step());
+ function step(){if(last){$("#onb").hidden=true;S.onb=true;save();render();toast("冒険のはじまりだ！")}else{onbI++;drawOnb()}}}
 render();
+if(!S.onb)showOnb();
 </script>
