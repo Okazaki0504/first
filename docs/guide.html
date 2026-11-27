@@ -35,7 +35,7 @@ th{background:#eef0fa}
 <h1>iPhoneだけで作って売る<br>中小企業診断士 学習アプリ 手順書</h1>
 <div class="sub">Claude Code ／ GitHub ／ Apple Developer ／ Codemagic を使い、Macなし・iPhoneだけで「開発 → 自分のiPhoneでテスト → App Storeで販売」まで進めるための手順</div>
 <table>
-<tr><th style="width:32%">版</th><td>v1.0（2026年11月27日）</td></tr>
+<tr><th style="width:32%">版</th><td>v1.1（2026年11月27日）</td></tr>
 <tr><th>アプリ仮名</th><td>診断士クエスト（RPG風・学習管理）</td></tr>
 <tr><th>画面モック</th><td>https://claude.ai/artifact/1rZy4CuqbJxBEyKjJincjo</td></tr>
 <tr><th>表記の見方</th><td><span class="who me">あなた</span>＝あなたがiPhoneで操作する作業 ／ <span class="who cl">Claude</span>＝Claude Codeに依頼して任せる作業<br><span class="tap">ボタン名</span>＝タップする場所</td></tr>
@@ -159,7 +159,7 @@ th{background:#eef0fa}
 <ol class="steps">
 <li>Safari（デスクトップ表示）で <code>developer.apple.com/account</code> → <span class="tap">Certificates, IDs &amp; Profiles</span> → <span class="tap">Identifiers</span> → <span class="tap">＋</span>。</li>
 <li><span class="tap">App IDs</span> → <span class="tap">Continue</span> → <span class="tap">App</span> → <span class="tap">Continue</span>。</li>
-<li>Description：<code>Shindan Quest</code>、Bundle ID：<span class="tap">Explicit</span> を選び、Claudeが指定する値（例 <code>com.okazaki0504.shindanquest</code>）を入力 → <span class="tap">Continue</span> → <span class="tap">Register</span>。</li>
+<li>Description：<code>Shindan Quest</code>、Bundle ID：<span class="tap">Explicit</span> を選び、<code>com.okazaki0504.shindanquest</code> を入力 → <span class="tap">Continue</span> → <span class="tap">Register</span>。</li>
 </ol>
 <h3>4-2. App Store Connect にアプリを登録 <span class="who me">あなた</span></h3>
 <ol class="steps">
@@ -178,15 +178,31 @@ th{background:#eef0fa}
 <div class="box warn"><b class="h">秘密情報の扱い</b>.p8ファイル・Issuer ID・キーIDは<b>Claudeのチャットに貼らないでください</b>。Codemagicの画面にだけ入力します。</div>
 <h3>4-4. Codemagic にキーを登録 <span class="who me">あなた</span></h3>
 <ol class="steps">
-<li>Codemagic → 左メニュー <span class="tap">Teams</span>（個人なら <span class="tap">Personal Account</span>）→ <span class="tap">Integrations</span> → <span class="tap">Developer Portal</span> の <span class="tap">Connect</span>。</li>
-<li>API key name：<code>codemagic_asc</code>（Claudeが codemagic.yaml で指定する名前と同じにする）、Issuer ID・Key IDを入力、.p8ファイルを <span class="tap">Choose a .p8 file</span> で選ぶ → <span class="tap">Save</span>。</li>
+<li>Codemagic → チーム（または個人アカウント）の設定 → <span class="tap">Team integrations</span>（個人は <span class="tap">Integrations</span>）→ <span class="tap">Developer Portal</span> → <span class="tap">Manage keys</span>。</li>
+<li><span class="tap">Add key</span> → App Store Connect API key name に <code>codemagic_asc</code> と入力（codemagic.yaml の名前と<b>完全に同じ</b>にする）。</li>
+<li>Issuer ID・Key ID を入力し、<span class="tap">Choose a .p8 file</span> で4-3の.p8ファイルを選ぶ → <span class="tap">Save</span>。</li>
 </ol>
-<h3>4-5. リポジトリを追加してビルド <span class="who me">あなた</span></h3>
+<h3>4-5. 署名用の証明書をCodemagicで作る <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>Codemagic の設定 → <span class="tap">codemagic.yaml settings</span> → <span class="tap">Code signing identities</span> → <span class="tap">iOS certificates</span> タブ。</li>
+<li>証明書をまだ持っていないので、<b>Codemagicに新規作成させる</b>ボタン（Generate certificate／Create certificate など）を選ぶ。APIキーは <code>codemagic_asc</code>、種類は <b>Apple Distribution</b>、Reference name は <code>dist_cert</code>。</li>
+<li>作成されると一覧に表示される（Appleの開発者サイトにも自動で登録されます）。</li>
+</ol>
+<h3>4-6. プロビジョニングプロファイルを作る <span class="who me">あなた</span></h3>
+<ol class="steps">
+<li>Safari（デスクトップ表示）で <code>developer.apple.com/account</code> → <span class="tap">Certificates, IDs &amp; Profiles</span> → <span class="tap">Profiles</span> → <span class="tap">＋</span>。</li>
+<li>Distribution の <span class="tap">App Store Connect</span> → <span class="tap">Continue</span>。</li>
+<li>App ID：4-1で登録した <code>com.okazaki0504.shindanquest</code> → <span class="tap">Continue</span>。</li>
+<li>証明書：4-5でCodemagicが作ったもの（日付が今日のApple Distribution）を選ぶ → <span class="tap">Continue</span>。</li>
+<li>Provisioning Profile Name：<code>ShindanQuest AppStore</code> → <span class="tap">Generate</span>。</li>
+<li>Codemagic に戻り、<span class="tap">Code signing identities</span> → <span class="tap">iOS provisioning profiles</span> タブ → <span class="tap">Fetch profiles</span> → いま作ったプロファイルにチェック → Reference name を <code>appstore_profile</code> にして取り込む。<b>Certificate 欄に緑のチェック</b>が出ればOK。</li>
+</ol>
+<h3>4-7. リポジトリを追加してビルド <span class="who me">あなた</span></h3>
 <ol class="steps">
 <li>Codemagic → <span class="tap">Apps</span> → <span class="tap">Add application</span> → GitHub → <code>okazaki0504/first</code> を選ぶ → プロジェクト種別は <span class="tap">Flutter App</span>。</li>
 <li>設定方法を聞かれたら <span class="tap">codemagic.yaml</span> を選ぶ（Claudeが作成済みの設定を使う）。</li>
 <li><span class="tap">Start new build</span> → ブランチ <code>claude/shindan-learning-app-r76up9</code> → ワークフロー <code>ios-testflight</code> → <span class="tap">Start new build</span>。</li>
-<li>10〜20分待つ。緑のチェックで成功。</li>
+<li>10〜20分待つ。緑のチェックで成功。成功するとTestFlightへ自動で送られます。</li>
 <li><b>失敗したら</b>：ビルド画面の赤い行をタップ → ログ全文をコピー（または画面のスクリーンショット）→ Claudeのチャットに貼って「直して」と送る。Claudeが修正をpushしたら再度 <span class="tap">Start new build</span>。</li>
 </ol>
 
@@ -194,12 +210,12 @@ th{background:#eef0fa}
 <ol class="steps">
 <li><span class="who me">あなた</span> App Storeで「<b>TestFlight</b>」（Apple公式）をインストール。</li>
 <li>App Store Connect → 対象アプリ → <span class="tap">TestFlight</span> タブ。ビルドが「処理中」→「テスト可能」になるまで待つ（10〜30分）。</li>
-<li>「輸出コンプライアンス」の質問が出たら <span class="tap">暗号化を使用しない（標準の暗号化のみ）</span> を選ぶ（通信をしないアプリのため。Claudeが設定ファイルで自動回答させることも可能）。</li>
+<li>「輸出コンプライアンス」の質問は、アプリの設定で自動回答済み（暗号化なし）なので通常は表示されません。表示された場合は <span class="tap">なし</span>（標準の暗号化のみ）を選ぶ。</li>
 <li><span class="tap">内部テスト</span> の <span class="tap">＋</span> でグループを作り、自分（Apple ID）を追加。</li>
 <li>届いた招待メール、またはTestFlightアプリを開き <span class="tap">インストール</span>。ホーム画面からアプリを起動。</li>
 <li>使ってみて不具合や改善点をClaudeに送る → 修正 → Codemagicで再ビルド → TestFlightで自動更新、を繰り返す。</li>
 </ol>
-<div class="box tip"><b class="h">効率化</b>Claudeが codemagic.yaml に「ブランチにpushされたら自動ビルド」を設定すると、4-5の手動ビルドが不要になります。ただし無料枠の分数を消費するので、修正をまとめてからpushするよう依頼すると節約できます。</div>
+<div class="box tip"><b class="h">効率化</b>Claudeが codemagic.yaml に「ブランチにpushされたら自動ビルド」を設定すると、4-7の手動ビルドが不要になります。ただし無料枠の分数を消費するので、修正をまとめてからpushするよう依頼すると節約できます。</div>
 <h3>テストのチェックリスト</h3>
 <ul class="check">
 <li>初回起動〜試験日設定がわかりやすいか</li>

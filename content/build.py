@@ -11,7 +11,7 @@ for i, (topic, diff, q, c, a, e) in enumerate(Q, 1):
     items.append({"id": f"{sid}-{i:03d}", "subject": sid, "topic": topic, "level": diff,
                   "type": "tf" if tf else "mc4", "question": q,
                   "choices": ["○", "×"] if tf else c, "answer": a, "explanation": e})
-(ROOT / "assets/questions" / f"{sid}.json").write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
+(ROOT / "app/assets/questions" / f"{sid}.json").write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
 
 h = lambda s: html.escape(str(s))
 rows = []
