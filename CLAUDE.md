@@ -13,3 +13,4 @@
 - 一問一答データ: `content/<科目>_questions.py` → `python3 content/build.py <科目>` で `app/assets/questions/<科目>.json` と検証シートPDFを生成
 - アイコン: `python3 content/make_icon.py B --install`（案B：紺地に白い「診」と金のライン）
 - Bundle ID: com.okazaki0504.shindanquest ／ Codemagic のAPIキー名: codemagic_asc ／ ワークフロー: ios-testflight
+- サポート／プライバシーページ: 原本は `docs/site/`。公開は別リポジトリ `okazaki0504/shindan-support`（main・GitHub Pages）。原本を直したら同じファイルをそちらにもコピーして push する
