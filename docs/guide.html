@@ -35,7 +35,7 @@ th{background:#eef0fa}
 <h1>iPhoneだけで作って売る<br>中小企業診断士 学習アプリ 手順書</h1>
 <div class="sub">Claude Code ／ GitHub ／ Apple Developer ／ Codemagic を使い、Macなし・iPhoneだけで「開発 → 自分のiPhoneでテスト → App Storeで販売」まで進めるための手順</div>
 <table>
-<tr><th style="width:32%">版</th><td>v1.1（2026年11月27日）</td></tr>
+<tr><th style="width:32%">版</th><td>v1.2（2026年11月27日）</td></tr>
 <tr><th>アプリ仮名</th><td>診断士クエスト（RPG風・学習管理）</td></tr>
 <tr><th>画面モック</th><td>https://claude.ai/artifact/1rZy4CuqbJxBEyKjJincjo</td></tr>
 <tr><th>表記の見方</th><td><span class="who me">あなた</span>＝あなたがiPhoneで操作する作業 ／ <span class="who cl">Claude</span>＝Claude Codeに依頼して任せる作業<br><span class="tap">ボタン名</span>＝タップする場所</td></tr>
@@ -227,12 +227,21 @@ th{background:#eef0fa}
 </ul>
 
 <h2>6. 販売：App Store に申請する</h2>
+<h3>6-0. プライバシーポリシーとサポートページを公開する <span class="who me">あなた</span></h3>
+<p>審査には、誰でも開けるURLが必要です。アプリ本体のリポジトリは非公開のまま、ページだけを別の公開リポジトリで無料公開します。</p>
+<ol class="steps">
+<li>問い合わせ専用のメールアドレスを作る（例：Gmailで新規作成）。</li>
+<li>Safariで <code>github.com/new</code> を開く。Repository name に <code>shindan-support</code>、<span class="tap">Public</span> を選び、<span class="tap">Add a README file</span> にチェック → <span class="tap">Create repository</span>。</li>
+<li>Claudeに「shindan-support を作った。連絡先は ○○@gmail.com」と送る。<span class="who cl">Claude</span> がページ（<code>docs/site/</code> の内容）をそのリポジトリに送ります。</li>
+<li>リポジトリの <span class="tap">Settings</span> → <span class="tap">Pages</span> → Branch を <code>main</code>・フォルダを <code>/ (root)</code> にして <span class="tap">Save</span>。</li>
+<li>数分後、<code>https://okazaki0504.github.io/shindan-support/privacy.html</code> がSafariで開ければ完了。このURLをApp Store Connectの「プライバシーポリシーURL」、<code>…/support.html</code> を「サポートURL」に入力します。</li>
+</ol>
 <h3>6-1. Claudeに用意してもらうもの <span class="who cl">Claude</span></h3>
 <ul>
-<li>App Store用スクリーンショット（6.9インチ：1320×2868 など、App Store Connectが要求するサイズ）</li>
-<li>アプリ説明文・キーワード・サブタイトル案</li>
-<li>プライバシーポリシーのURL（GitHub Pagesで公開）とサポートURL</li>
-<li>アプリアイコン（1024×1024）</li>
+<li>App Store用スクリーンショット5枚（作成済み：<code>docs/screenshots/</code>、6.9インチ 1320×2868）</li>
+<li>アプリ説明文・キーワード・サブタイトル・審査メモ（作成済み：<code>docs/appstore_listing.md</code>）</li>
+<li>プライバシーポリシーとサポートページ（作成済み：<code>docs/site/</code>）</li>
+<li>アプリアイコン（作成済み・アプリに組み込み済み）</li>
 </ul>
 <h3>6-2. App Store Connect で入力 <span class="who me">あなた</span></h3>
 <ol class="steps">
