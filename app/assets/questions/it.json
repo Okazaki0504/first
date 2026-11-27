@@ -1,0 +1,1556 @@
+[
+ {
+  "id": "it-001",
+  "subject": "it",
+  "topic": "ハードウェア",
+  "level": 1,
+  "type": "mc4",
+  "question": "CPUのクロック周波数の単位は？",
+  "choices": [
+   "Hz（ヘルツ）",
+   "bps",
+   "dpi",
+   "MIPS"
+  ],
+  "answer": 0,
+  "explanation": "1秒間に何回の信号を発生させるかを表し、高いほど処理が速くなる傾向があります。"
+ },
+ {
+  "id": "it-002",
+  "subject": "it",
+  "topic": "ハードウェア",
+  "level": 2,
+  "type": "mc4",
+  "question": "キャッシュメモリに主に使われる、高速なメモリは？",
+  "choices": [
+   "SRAM",
+   "DRAM",
+   "フラッシュメモリ",
+   "ROM"
+  ],
+  "answer": 0,
+  "explanation": "SRAMは高速ですが高価です。主記憶には安価で大容量のDRAMが使われます。"
+ },
+ {
+  "id": "it-003",
+  "subject": "it",
+  "topic": "ハードウェア",
+  "level": 1,
+  "type": "tf",
+  "question": "【○×】キャッシュメモリは、CPUと主記憶装置の速度差を埋めるために使われる。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。よく使うデータを高速なメモリに置いて、処理を速くします。"
+ },
+ {
+  "id": "it-004",
+  "subject": "it",
+  "topic": "ハードウェア",
+  "level": 1,
+  "type": "tf",
+  "question": "【○×】フラッシュメモリは、電源を切ると内容が消える揮発性メモリである。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 1,
+  "explanation": "×。フラッシュメモリは電源を切っても内容が消えない不揮発性メモリです。USBメモリやSSDに使われます。"
+ },
+ {
+  "id": "it-005",
+  "subject": "it",
+  "topic": "ハードウェア",
+  "level": 1,
+  "type": "mc4",
+  "question": "HDDと比べたSSDの特徴として正しいものは？",
+  "choices": [
+   "可動部分がなく、衝撃に強く高速である",
+   "容量あたりの価格が必ず安い",
+   "磁気ディスクを回転させて読み書きする",
+   "書き換え回数に制限がない"
+  ],
+  "answer": 0,
+  "explanation": "SSDはフラッシュメモリを使うため、書き換え回数に上限があります。"
+ },
+ {
+  "id": "it-006",
+  "subject": "it",
+  "topic": "ハードウェア",
+  "level": 1,
+  "type": "mc4",
+  "question": "複数のディスクに同じデータを書き込む「ミラーリング」を行うRAIDは？",
+  "choices": [
+   "RAID0",
+   "RAID1",
+   "RAID5",
+   "RAID6"
+  ],
+  "answer": 1,
+  "explanation": "1台が故障しても、もう1台のデータで運用を続けられます。"
+ },
+ {
+  "id": "it-007",
+  "subject": "it",
+  "topic": "ハードウェア",
+  "level": 2,
+  "type": "mc4",
+  "question": "データを複数のディスクに分散して書き込み高速化するが、冗長性のないRAIDは？",
+  "choices": [
+   "RAID0",
+   "RAID1",
+   "RAID5",
+   "RAID10"
+  ],
+  "answer": 0,
+  "explanation": "ストライピングと呼ばれます。1台でも故障するとデータを失います。"
+ },
+ {
+  "id": "it-008",
+  "subject": "it",
+  "topic": "ハードウェア",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】RAID5は、パリティを分散して記録し、1台のディスクが故障してもデータを復元できる。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。3台以上のディスクが必要です。"
+ },
+ {
+  "id": "it-009",
+  "subject": "it",
+  "topic": "基礎理論",
+  "level": 1,
+  "type": "mc4",
+  "question": "1バイトは何ビット？",
+  "choices": [
+   "2ビット",
+   "4ビット",
+   "8ビット",
+   "16ビット"
+  ],
+  "answer": 2,
+  "explanation": "1ビットは0か1の1桁。8ビットで256通りを表せます。"
+ },
+ {
+  "id": "it-010",
+  "subject": "it",
+  "topic": "基礎理論",
+  "level": 1,
+  "type": "mc4",
+  "question": "10進数の13を2進数で表すと？",
+  "choices": [
+   "1011",
+   "1101",
+   "1110",
+   "1111"
+  ],
+  "answer": 1,
+  "explanation": "13＝8＋4＋1 なので 1101。"
+ },
+ {
+  "id": "it-011",
+  "subject": "it",
+  "topic": "基礎理論",
+  "level": 2,
+  "type": "mc4",
+  "question": "16進数の FF を10進数で表すと？",
+  "choices": [
+   "15",
+   "16",
+   "255",
+   "256"
+  ],
+  "answer": 2,
+  "explanation": "F＝15。15×16＋15＝255。"
+ },
+ {
+  "id": "it-012",
+  "subject": "it",
+  "topic": "ソフトウェア",
+  "level": 1,
+  "type": "tf",
+  "question": "【○×】OSのマルチタスク機能は、複数のプログラムを見かけ上同時に実行させる機能である。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。CPUの処理時間を細かく切り替えて割り当てます。"
+ },
+ {
+  "id": "it-013",
+  "subject": "it",
+  "topic": "ソフトウェア",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】OSS（オープンソースソフトウェア）は、著作権が放棄されたソフトウェアである。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 1,
+  "explanation": "×。OSSにも著作権があり、ライセンスの条件に従って利用・改変・再配布できます。"
+ },
+ {
+  "id": "it-014",
+  "subject": "it",
+  "topic": "ソフトウェア",
+  "level": 2,
+  "type": "mc4",
+  "question": "改変したプログラムを配布する場合にも、同じライセンス（ソースコードの公開）を求めるOSSのライセンスは？",
+  "choices": [
+   "GPL",
+   "BSDライセンス",
+   "MITライセンス",
+   "Apacheライセンス"
+  ],
+  "answer": 0,
+  "explanation": "このような考え方をコピーレフトといいます。"
+ },
+ {
+  "id": "it-015",
+  "subject": "it",
+  "topic": "ソフトウェア",
+  "level": 1,
+  "type": "mc4",
+  "question": "プログラムを1命令ずつ解釈しながら実行する言語処理系は？",
+  "choices": [
+   "インタプリタ",
+   "コンパイラ",
+   "アセンブラ",
+   "リンカ"
+  ],
+  "answer": 0,
+  "explanation": "コンパイラは、実行前にプログラム全体を機械語に翻訳します。"
+ },
+ {
+  "id": "it-016",
+  "subject": "it",
+  "topic": "ソフトウェア",
+  "level": 2,
+  "type": "mc4",
+  "question": "バイトコードに変換され、仮想マシン（JVM）上で動作するため、OSに依存しにくいプログラミング言語は？",
+  "choices": [
+   "Java",
+   "C言語",
+   "COBOL",
+   "アセンブリ言語"
+  ],
+  "answer": 0,
+  "explanation": "「一度書けばどこでも動く」という特徴があります。"
+ },
+ {
+  "id": "it-017",
+  "subject": "it",
+  "topic": "ソフトウェア",
+  "level": 1,
+  "type": "mc4",
+  "question": "Webページの構造を記述するマークアップ言語は？",
+  "choices": [
+   "HTML",
+   "SQL",
+   "CSS",
+   "Python"
+  ],
+  "answer": 0,
+  "explanation": "CSSは見た目（デザイン）を指定する言語です。"
+ },
+ {
+  "id": "it-018",
+  "subject": "it",
+  "topic": "ソフトウェア",
+  "level": 2,
+  "type": "mc4",
+  "question": "利用者が独自のタグを定義でき、データ交換に使われるマークアップ言語は？",
+  "choices": [
+   "XML",
+   "HTML",
+   "CSV",
+   "PDF"
+  ],
+  "answer": 0,
+  "explanation": "拡張可能なマークアップ言語（eXtensible Markup Language）です。"
+ },
+ {
+  "id": "it-019",
+  "subject": "it",
+  "topic": "ソフトウェア",
+  "level": 2,
+  "type": "mc4",
+  "question": "「名前：値」の組で記述する、軽量なデータ交換形式は？",
+  "choices": [
+   "JSON",
+   "XML",
+   "HTML",
+   "SQL"
+  ],
+  "answer": 0,
+  "explanation": "Web APIのデータ形式として広く使われています。"
+ },
+ {
+  "id": "it-020",
+  "subject": "it",
+  "topic": "ソフトウェア",
+  "level": 2,
+  "type": "mc4",
+  "question": "1台の物理サーバ上で複数の仮想マシンを動かすための制御ソフトウェアは？",
+  "choices": [
+   "ハイパーバイザ",
+   "コンパイラ",
+   "ファームウェア",
+   "デバイスドライバ"
+  ],
+  "answer": 0,
+  "explanation": "サーバの台数を減らし、資源を有効に使えます。"
+ },
+ {
+  "id": "it-021",
+  "subject": "it",
+  "topic": "データベース",
+  "level": 1,
+  "type": "mc4",
+  "question": "関係データベースで、他の表の主キーを参照する列を何という？",
+  "choices": [
+   "外部キー",
+   "候補キー",
+   "複合キー",
+   "インデックス"
+  ],
+  "answer": 0,
+  "explanation": "表と表の関係を表し、参照整合性を保つために使います。"
+ },
+ {
+  "id": "it-022",
+  "subject": "it",
+  "topic": "データベース",
+  "level": 1,
+  "type": "mc4",
+  "question": "データベースの正規化の主な目的は？",
+  "choices": [
+   "データの重複をなくし、更新時の不整合を防ぐ",
+   "検索を必ず速くする",
+   "データ量を増やす",
+   "表の数を減らす"
+  ],
+  "answer": 0,
+  "explanation": "正規化すると表の数は増えることが多く、結合によって検索が遅くなる場合もあります。"
+ },
+ {
+  "id": "it-023",
+  "subject": "it",
+  "topic": "データベース",
+  "level": 2,
+  "type": "mc4",
+  "question": "第1正規形にするために行うことは？",
+  "choices": [
+   "繰り返し項目を排除する",
+   "部分関数従属を排除する",
+   "推移的関数従属を排除する",
+   "主キーを削除する"
+  ],
+  "answer": 0,
+  "explanation": "第2正規形は部分関数従属、第3正規形は推移的関数従属を排除します。"
+ },
+ {
+  "id": "it-024",
+  "subject": "it",
+  "topic": "データベース",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】第3正規形では、主キー以外の項目間の関数従属（推移的関数従属）を排除する。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。"
+ },
+ {
+  "id": "it-025",
+  "subject": "it",
+  "topic": "SQL",
+  "level": 1,
+  "type": "mc4",
+  "question": "表からデータを検索するSQLの命令は？",
+  "choices": [
+   "SELECT",
+   "INSERT",
+   "UPDATE",
+   "DELETE"
+  ],
+  "answer": 0,
+  "explanation": "INSERTは追加、UPDATEは更新、DELETEは削除です。"
+ },
+ {
+  "id": "it-026",
+  "subject": "it",
+  "topic": "SQL",
+  "level": 2,
+  "type": "mc4",
+  "question": "SQLで、データを特定の列の値ごとにまとめて集計するときに使う句は？",
+  "choices": [
+   "GROUP BY",
+   "ORDER BY",
+   "WHERE",
+   "JOIN"
+  ],
+  "answer": 0,
+  "explanation": "ORDER BYは並べ替え、WHEREは行の絞り込みです。"
+ },
+ {
+  "id": "it-027",
+  "subject": "it",
+  "topic": "SQL",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】HAVING句は、GROUP BY句でグループ化した結果に条件をつけるときに使う。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。グループ化する前の行に条件をつけるのはWHERE句です。"
+ },
+ {
+  "id": "it-028",
+  "subject": "it",
+  "topic": "データベース",
+  "level": 2,
+  "type": "mc4",
+  "question": "トランザクションのACID特性で、「すべて実行されるか、まったく実行されないかのどちらか」を表すのは？",
+  "choices": [
+   "原子性（Atomicity）",
+   "一貫性（Consistency）",
+   "独立性（Isolation）",
+   "耐久性（Durability）"
+  ],
+  "answer": 0,
+  "explanation": "振込で出金だけ行われて入金されない、といった中途半端な状態を防ぎます。"
+ },
+ {
+  "id": "it-029",
+  "subject": "it",
+  "topic": "データベース",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】トランザクションの一貫性（Consistency）とは、処理の前後でデータの整合性が保たれることをいう。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。"
+ },
+ {
+  "id": "it-030",
+  "subject": "it",
+  "topic": "データベース",
+  "level": 2,
+  "type": "mc4",
+  "question": "2つのトランザクションが互いに相手のロック解除を待ち、処理が進まなくなる状態は？",
+  "choices": [
+   "デッドロック",
+   "ロールバック",
+   "コミット",
+   "オーバーフロー"
+  ],
+  "answer": 0,
+  "explanation": "排他制御で起こりうる問題です。"
+ },
+ {
+  "id": "it-031",
+  "subject": "it",
+  "topic": "データベース",
+  "level": 3,
+  "type": "mc4",
+  "question": "媒体障害が発生したとき、バックアップを復元し、更新後ログを使って障害直前の状態まで回復する方法は？",
+  "choices": [
+   "ロールフォワード",
+   "ロールバック",
+   "チェックポイント",
+   "コミット"
+  ],
+  "answer": 0,
+  "explanation": "更新前ログを使って処理を取り消すのはロールバックです。"
+ },
+ {
+  "id": "it-032",
+  "subject": "it",
+  "topic": "データ活用",
+  "level": 1,
+  "type": "mc4",
+  "question": "意思決定や分析のために、複数のシステムのデータを時系列で統合・蓄積したデータベースは？",
+  "choices": [
+   "データウェアハウス",
+   "データマート",
+   "トランザクションDB",
+   "キャッシュ"
+  ],
+  "answer": 0,
+  "explanation": "特定の部門向けに切り出したものはデータマートです。"
+ },
+ {
+  "id": "it-033",
+  "subject": "it",
+  "topic": "データ活用",
+  "level": 2,
+  "type": "mc4",
+  "question": "OLAPの操作で、集計データをより詳細なレベルに掘り下げていく操作は？",
+  "choices": [
+   "ドリルダウン",
+   "ロールアップ",
+   "スライス",
+   "ダイス"
+  ],
+  "answer": 0,
+  "explanation": "例えば「年→月→日」と詳しく見ていく操作です。逆はロールアップ（ドリルアップ）。"
+ },
+ {
+  "id": "it-034",
+  "subject": "it",
+  "topic": "データ活用",
+  "level": 1,
+  "type": "mc4",
+  "question": "大量のデータから、統計や機械学習を使って規則性や関係を発見する手法は？",
+  "choices": [
+   "データマイニング",
+   "データクレンジング",
+   "正規化",
+   "バックアップ"
+  ],
+  "answer": 0,
+  "explanation": "「おむつとビールが一緒に売れる」といった関係の発見が有名な例です。"
+ },
+ {
+  "id": "it-035",
+  "subject": "it",
+  "topic": "データベース",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】キー・バリュー型などのNoSQLデータベースは、関係データベースに比べて大量データの高速処理に向く場合がある。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。一方で、複雑な結合や厳密なトランザクション処理は苦手なことがあります。"
+ },
+ {
+  "id": "it-036",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "mc4",
+  "question": "同じ建物内など、限られた範囲のコンピュータを結ぶネットワークは？",
+  "choices": [
+   "LAN",
+   "WAN",
+   "インターネット",
+   "VAN"
+  ],
+  "answer": 0,
+  "explanation": "離れた拠点を結ぶネットワークはWANです。"
+ },
+ {
+  "id": "it-037",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 2,
+  "type": "mc4",
+  "question": "OSI参照モデルの第3層は？",
+  "choices": [
+   "ネットワーク層",
+   "トランスポート層",
+   "データリンク層",
+   "セッション層"
+  ],
+  "answer": 0,
+  "explanation": "下から、物理層・データリンク層・ネットワーク層・トランスポート層・セッション層・プレゼンテーション層・アプリケーション層。"
+ },
+ {
+  "id": "it-038",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 2,
+  "type": "mc4",
+  "question": "TCP/IPで、IPアドレスを使って宛先までの経路を制御するプロトコルは？",
+  "choices": [
+   "IP",
+   "TCP",
+   "HTTP",
+   "SMTP"
+  ],
+  "answer": 0,
+  "explanation": "OSI参照モデルのネットワーク層に相当します。"
+ },
+ {
+  "id": "it-039",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 2,
+  "type": "mc4",
+  "question": "コネクションを確立せずに送信し、高速だが到達確認を行わないプロトコルは？",
+  "choices": [
+   "UDP",
+   "TCP",
+   "FTP",
+   "HTTPS"
+  ],
+  "answer": 0,
+  "explanation": "動画配信や音声通話など、リアルタイム性が重要な通信に使われます。"
+ },
+ {
+  "id": "it-040",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "tf",
+  "question": "【○×】TCPは、データの到達確認や再送制御を行うため、信頼性の高い通信ができる。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。"
+ },
+ {
+  "id": "it-041",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "mc4",
+  "question": "IPv4のIPアドレスの長さは？",
+  "choices": [
+   "32ビット",
+   "64ビット",
+   "128ビット",
+   "256ビット"
+  ],
+  "answer": 0,
+  "explanation": "約43億通りしかなく、アドレスが不足しています。"
+ },
+ {
+  "id": "it-042",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "mc4",
+  "question": "IPv6のIPアドレスの長さは？",
+  "choices": [
+   "32ビット",
+   "64ビット",
+   "128ビット",
+   "256ビット"
+  ],
+  "answer": 2,
+  "explanation": "ほぼ無限といえる数のアドレスを割り当てられます。"
+ },
+ {
+  "id": "it-043",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "mc4",
+  "question": "ネットワークに接続したコンピュータに、IPアドレスを自動的に割り当てるプロトコルは？",
+  "choices": [
+   "DHCP",
+   "DNS",
+   "NAT",
+   "ARP"
+  ],
+  "answer": 0,
+  "explanation": "手作業での設定ミスやアドレスの重複を防げます。"
+ },
+ {
+  "id": "it-044",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "mc4",
+  "question": "ドメイン名とIPアドレスを対応づける仕組みは？",
+  "choices": [
+   "DNS",
+   "DHCP",
+   "NTP",
+   "SNMP"
+  ],
+  "answer": 0,
+  "explanation": "「example.jp」のような名前から、通信に必要なIPアドレスを調べます。"
+ },
+ {
+  "id": "it-045",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 2,
+  "type": "mc4",
+  "question": "プライベートIPアドレスとグローバルIPアドレスを相互に変換する技術は？",
+  "choices": [
+   "NAT（NAPT）",
+   "DHCP",
+   "DNS",
+   "VLAN"
+  ],
+  "answer": 0,
+  "explanation": "1つのグローバルアドレスを複数の端末で共有できます。"
+ },
+ {
+  "id": "it-046",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "tf",
+  "question": "【○×】プライベートIPアドレスは、インターネット上でそのまま通信に使うことができる。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 1,
+  "explanation": "×。組織内でのみ使えるアドレスで、インターネットと通信するにはNATなどで変換が必要です。"
+ },
+ {
+  "id": "it-047",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 2,
+  "type": "mc4",
+  "question": "ネットワーク層で、宛先のIPアドレスをもとに最適な経路を選んでデータを転送する機器は？",
+  "choices": [
+   "ルータ",
+   "リピータハブ",
+   "ブリッジ",
+   "モデム"
+  ],
+  "answer": 0,
+  "explanation": "異なるネットワーク同士をつなぎます。"
+ },
+ {
+  "id": "it-048",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "mc4",
+  "question": "HTTPSの特徴として正しいものは？",
+  "choices": [
+   "SSL/TLSで通信を暗号化する",
+   "メールを送信する",
+   "ファイルを圧縮する",
+   "IPアドレスを割り当てる"
+  ],
+  "answer": 0,
+  "explanation": "盗聴や改ざん、なりすましを防ぎます。"
+ },
+ {
+  "id": "it-049",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 2,
+  "type": "mc4",
+  "question": "メールをサーバ上に保存したまま管理でき、複数の端末から同じメールを読める受信プロトコルは？",
+  "choices": [
+   "IMAP",
+   "POP3",
+   "SMTP",
+   "FTP"
+  ],
+  "answer": 0,
+  "explanation": "POP3は、メールを端末にダウンロードして読むのが基本です。"
+ },
+ {
+  "id": "it-050",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "tf",
+  "question": "【○×】SMTPは、メールサーバからメールを受信するためのプロトコルである。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 1,
+  "explanation": "×。SMTPはメールを送信・転送するためのプロトコルです。受信にはPOP3やIMAPを使います。"
+ },
+ {
+  "id": "it-051",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "mc4",
+  "question": "無線LANの標準規格は？",
+  "choices": [
+   "IEEE 802.11",
+   "IEEE 802.3",
+   "Bluetooth",
+   "NFC"
+  ],
+  "answer": 0,
+  "explanation": "IEEE 802.3は有線LAN（イーサネット）の規格です。"
+ },
+ {
+  "id": "it-052",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 2,
+  "type": "mc4",
+  "question": "無線LANの通信を暗号化するためのセキュリティ規格は？",
+  "choices": [
+   "WPA3",
+   "SSID",
+   "MACアドレス",
+   "IPv6"
+  ],
+  "answer": 0,
+  "explanation": "古いWEPは解読されやすいため使うべきではありません。"
+ },
+ {
+  "id": "it-053",
+  "subject": "it",
+  "topic": "ネットワーク",
+  "level": 1,
+  "type": "mc4",
+  "question": "インターネットなどの公衆網上に、暗号化などで仮想的な専用線をつくる技術は？",
+  "choices": [
+   "VPN",
+   "VLAN",
+   "NAT",
+   "CDN"
+  ],
+  "answer": 0,
+  "explanation": "テレワークで社内ネットワークに安全に接続する際に使われます。"
+ },
+ {
+  "id": "it-054",
+  "subject": "it",
+  "topic": "クラウド",
+  "level": 1,
+  "type": "mc4",
+  "question": "アプリケーションソフトをインターネット経由でサービスとして提供するクラウドの形態は？",
+  "choices": [
+   "SaaS",
+   "PaaS",
+   "IaaS",
+   "オンプレミス"
+  ],
+  "answer": 0,
+  "explanation": "利用者はソフトのインストールや保守が不要です。"
+ },
+ {
+  "id": "it-055",
+  "subject": "it",
+  "topic": "クラウド",
+  "level": 1,
+  "type": "mc4",
+  "question": "サーバやストレージなどのインフラをサービスとして提供するクラウドの形態は？",
+  "choices": [
+   "IaaS",
+   "SaaS",
+   "PaaS",
+   "ASP"
+  ],
+  "answer": 0,
+  "explanation": "OSやミドルウェアは利用者が用意します。"
+ },
+ {
+  "id": "it-056",
+  "subject": "it",
+  "topic": "クラウド",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】PaaSは、アプリケーションの実行基盤（OSやミドルウェアなど）をサービスとして提供する。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。利用者はアプリケーションの開発・運用に集中できます。"
+ },
+ {
+  "id": "it-057",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 1,
+  "type": "mc4",
+  "question": "情報セキュリティの3要素は？",
+  "choices": [
+   "機密性・完全性・可用性",
+   "真正性・責任追跡性・信頼性",
+   "暗号化・認証・監視",
+   "予防・検知・回復"
+  ],
+  "answer": 0,
+  "explanation": "CIA（Confidentiality・Integrity・Availability）と呼ばれます。"
+ },
+ {
+  "id": "it-058",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 1,
+  "type": "mc4",
+  "question": "情報セキュリティの「可用性」の説明として正しいものは？",
+  "choices": [
+   "必要なときに、許可された人が情報やシステムを使えること",
+   "許可された人だけが情報にアクセスできること",
+   "情報が正確で改ざんされていないこと",
+   "操作した人を後から特定できること"
+  ],
+  "answer": 0,
+  "explanation": "システムの二重化やバックアップで高めます。"
+ },
+ {
+  "id": "it-059",
+  "subject": "it",
+  "topic": "暗号",
+  "level": 2,
+  "type": "mc4",
+  "question": "共通鍵暗号方式の課題として正しいものは？",
+  "choices": [
+   "鍵を安全に相手に渡す方法（鍵配送）が難しい",
+   "暗号化・復号の処理が非常に遅い",
+   "鍵が2種類必要",
+   "暗号文が元のデータの数倍の大きさになる"
+  ],
+  "answer": 0,
+  "explanation": "通信相手ごとに鍵が必要になり、管理も大変です。"
+ },
+ {
+  "id": "it-060",
+  "subject": "it",
+  "topic": "暗号",
+  "level": 2,
+  "type": "mc4",
+  "question": "公開鍵暗号方式で、送信者がデータを暗号化するときに使う鍵は？",
+  "choices": [
+   "受信者の公開鍵",
+   "受信者の秘密鍵",
+   "送信者の秘密鍵",
+   "送信者の公開鍵"
+  ],
+  "answer": 0,
+  "explanation": "受信者だけが持つ秘密鍵でしか復号できないため、安全に送れます。"
+ },
+ {
+  "id": "it-061",
+  "subject": "it",
+  "topic": "暗号",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】デジタル署名の検証には、送信者の公開鍵を用いる。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。送信者は自分の秘密鍵で署名し、受信者は送信者の公開鍵で検証します。"
+ },
+ {
+  "id": "it-062",
+  "subject": "it",
+  "topic": "暗号",
+  "level": 2,
+  "type": "mc4",
+  "question": "公開鍵が本人のものであることを証明するデジタル証明書を発行する機関は？",
+  "choices": [
+   "認証局（CA）",
+   "DNSサーバ",
+   "プロバイダ",
+   "公証役場"
+  ],
+  "answer": 0,
+  "explanation": "公開鍵の持ち主のなりすましを防ぎます。"
+ },
+ {
+  "id": "it-063",
+  "subject": "it",
+  "topic": "暗号",
+  "level": 2,
+  "type": "mc4",
+  "question": "データの改ざんを検知するために、データから固定長の値を生成する関数は？",
+  "choices": [
+   "ハッシュ関数",
+   "乱数関数",
+   "暗号化関数",
+   "圧縮関数"
+  ],
+  "answer": 0,
+  "explanation": "元のデータが少しでも変わると、まったく違う値になります。"
+ },
+ {
+  "id": "it-064",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 1,
+  "type": "mc4",
+  "question": "外部ネットワークと内部ネットワークの間で、不正な通信を遮断する仕組みは？",
+  "choices": [
+   "ファイアウォール",
+   "ルータ",
+   "プロキシ",
+   "ロードバランサ"
+  ],
+  "answer": 0,
+  "explanation": "許可された通信だけを通すように設定します。"
+ },
+ {
+  "id": "it-065",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 2,
+  "type": "mc4",
+  "question": "Webサーバなど外部に公開するサーバを置く、内部ネットワークと外部ネットワークの中間の領域は？",
+  "choices": [
+   "DMZ",
+   "VPN",
+   "VLAN",
+   "イントラネット"
+  ],
+  "answer": 0,
+  "explanation": "公開サーバが攻撃されても、内部ネットワークへの被害を防ぎやすくなります。"
+ },
+ {
+  "id": "it-066",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 1,
+  "type": "mc4",
+  "question": "実在の企業を装った偽のメールやWebサイトで、IDやパスワードをだまし取る手口は？",
+  "choices": [
+   "フィッシング",
+   "DoS攻撃",
+   "ブルートフォース攻撃",
+   "ゼロデイ攻撃"
+  ],
+  "answer": 0,
+  "explanation": "メールのリンクからではなく、公式サイトから直接ログインすることが対策になります。"
+ },
+ {
+  "id": "it-067",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 1,
+  "type": "mc4",
+  "question": "ファイルを暗号化して使えなくし、元に戻すことと引き換えに金銭を要求するマルウェアは？",
+  "choices": [
+   "ランサムウェア",
+   "スパイウェア",
+   "アドウェア",
+   "キーロガー"
+  ],
+  "answer": 0,
+  "explanation": "定期的なバックアップをネットワークから切り離して保管することが重要な対策です。"
+ },
+ {
+  "id": "it-068",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 1,
+  "type": "tf",
+  "question": "【○×】標的型攻撃メールは、不特定多数の人に同じ内容を大量に送りつける攻撃である。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 1,
+  "explanation": "×。特定の組織や人を狙い、業務に関係がありそうな内容を装って送られます。"
+ },
+ {
+  "id": "it-069",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 2,
+  "type": "mc4",
+  "question": "Webアプリケーションの入力欄に不正なSQL文を入力し、データベースを不正に操作する攻撃は？",
+  "choices": [
+   "SQLインジェクション",
+   "クロスサイトスクリプティング",
+   "DDoS攻撃",
+   "中間者攻撃"
+  ],
+  "answer": 0,
+  "explanation": "入力値のチェックやプレースホルダの利用が対策になります。"
+ },
+ {
+  "id": "it-070",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 2,
+  "type": "mc4",
+  "question": "Webサイトの脆弱性を突いて悪意のあるスクリプトを埋め込み、閲覧者のブラウザで実行させる攻撃は？",
+  "choices": [
+   "クロスサイトスクリプティング",
+   "SQLインジェクション",
+   "DNSキャッシュポイズニング",
+   "パスワードリスト攻撃"
+  ],
+  "answer": 0,
+  "explanation": "出力時のエスケープ処理が対策になります。"
+ },
+ {
+  "id": "it-071",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 1,
+  "type": "mc4",
+  "question": "大量のアクセスを送りつけてサーバを過負荷にし、サービスを停止させる攻撃は？",
+  "choices": [
+   "DoS（DDoS）攻撃",
+   "フィッシング",
+   "ソーシャルエンジニアリング",
+   "スキミング"
+  ],
+  "answer": 0,
+  "explanation": "複数のコンピュータから一斉に行うものをDDoS攻撃といいます。"
+ },
+ {
+  "id": "it-072",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 1,
+  "type": "mc4",
+  "question": "電話で上司を装ってパスワードを聞き出すなど、人の心理の隙を突いて情報を得る手口は？",
+  "choices": [
+   "ソーシャルエンジニアリング",
+   "ブルートフォース攻撃",
+   "バッファオーバーフロー",
+   "ポートスキャン"
+  ],
+  "answer": 0,
+  "explanation": "技術的な対策だけでなく、教育や手順の整備が必要です。"
+ },
+ {
+  "id": "it-073",
+  "subject": "it",
+  "topic": "認証",
+  "level": 2,
+  "type": "mc4",
+  "question": "二要素認証の例として正しいものは？",
+  "choices": [
+   "パスワード＋スマートフォンに届くワンタイムコード",
+   "パスワード＋秘密の質問",
+   "指紋＋静脈",
+   "ICカード＋社員証"
+  ],
+  "answer": 0,
+  "explanation": "知識・所持・生体のうち、異なる2つの要素を組み合わせます。"
+ },
+ {
+  "id": "it-074",
+  "subject": "it",
+  "topic": "認証",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】パスワードと秘密の質問の組合せは、二要素認証にあたる。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 1,
+  "explanation": "×。どちらも「知っていること（知識）」なので、要素は1種類です。"
+ },
+ {
+  "id": "it-075",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 2,
+  "type": "mc4",
+  "question": "前回のバックアップ（種類を問わない）以降に変更されたデータだけを保存するバックアップ方式は？",
+  "choices": [
+   "増分バックアップ",
+   "差分バックアップ",
+   "フルバックアップ",
+   "ミラーリング"
+  ],
+  "answer": 0,
+  "explanation": "差分バックアップは、前回のフルバックアップ以降の変更をすべて保存します。"
+ },
+ {
+  "id": "it-076",
+  "subject": "it",
+  "topic": "セキュリティ",
+  "level": 2,
+  "type": "mc4",
+  "question": "情報セキュリティマネジメントシステム（ISMS）の国際規格は？",
+  "choices": [
+   "ISO/IEC 27001",
+   "ISO 9001",
+   "ISO 14001",
+   "ISO 26000"
+  ],
+  "answer": 0,
+  "explanation": "組織の情報セキュリティを計画・実行・点検・改善（PDCA）で管理する仕組みの規格です。"
+ },
+ {
+  "id": "it-077",
+  "subject": "it",
+  "topic": "システム開発",
+  "level": 1,
+  "type": "mc4",
+  "question": "要件定義・設計・プログラミング・テストなどの工程を順番に進め、原則として前の工程に戻らない開発手法は？",
+  "choices": [
+   "ウォーターフォールモデル",
+   "アジャイル開発",
+   "プロトタイピング",
+   "スパイラルモデル"
+  ],
+  "answer": 0,
+  "explanation": "計画や進捗を管理しやすい一方、途中の仕様変更に弱いのが欠点です。"
+ },
+ {
+  "id": "it-078",
+  "subject": "it",
+  "topic": "システム開発",
+  "level": 1,
+  "type": "tf",
+  "question": "【○×】スクラムでは、スプリントと呼ばれる短い期間を繰り返して開発を進める。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。アジャイル開発の代表的な手法です。"
+ },
+ {
+  "id": "it-079",
+  "subject": "it",
+  "topic": "システム開発",
+  "level": 1,
+  "type": "mc4",
+  "question": "早い段階で試作品をつくり、利用者に確認してもらいながら要求を明確にする開発手法は？",
+  "choices": [
+   "プロトタイピング",
+   "ウォーターフォールモデル",
+   "V字モデル",
+   "リバースエンジニアリング"
+  ],
+  "answer": 0,
+  "explanation": "利用者の要求があいまいなときに有効です。"
+ },
+ {
+  "id": "it-080",
+  "subject": "it",
+  "topic": "システム開発",
+  "level": 2,
+  "type": "mc4",
+  "question": "設計・開発・評価のサイクルを繰り返し、リスクを分析しながら徐々にシステムを完成させる手法は？",
+  "choices": [
+   "スパイラルモデル",
+   "ウォーターフォールモデル",
+   "ジャクソン法",
+   "DOA"
+  ],
+  "answer": 0,
+  "explanation": "大規模で、リスクの大きい開発に向いています。"
+ },
+ {
+  "id": "it-081",
+  "subject": "it",
+  "topic": "システム開発",
+  "level": 2,
+  "type": "mc4",
+  "question": "V字モデルで、単体テストに対応する設計工程は？",
+  "choices": [
+   "詳細設計（プログラム設計）",
+   "要件定義",
+   "基本設計（外部設計）",
+   "システム方式設計"
+  ],
+  "answer": 0,
+  "explanation": "要件定義は受入テスト（システムテスト）、基本設計は結合テストに対応します。"
+ },
+ {
+  "id": "it-082",
+  "subject": "it",
+  "topic": "テスト",
+  "level": 1,
+  "type": "mc4",
+  "question": "プログラムの内部構造（処理の流れ）に着目してテストケースをつくるテストは？",
+  "choices": [
+   "ホワイトボックステスト",
+   "ブラックボックステスト",
+   "受入テスト",
+   "負荷テスト"
+  ],
+  "answer": 0,
+  "explanation": "命令網羅や分岐網羅などの基準があります。"
+ },
+ {
+  "id": "it-083",
+  "subject": "it",
+  "topic": "テスト",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】同値分割や境界値分析は、ホワイトボックステストの技法である。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 1,
+  "explanation": "×。入力と出力の関係に着目するブラックボックステストの技法です。"
+ },
+ {
+  "id": "it-084",
+  "subject": "it",
+  "topic": "テスト",
+  "level": 1,
+  "type": "mc4",
+  "question": "プログラムを修正したときに、修正していない部分に悪影響が出ていないかを確認するテストは？",
+  "choices": [
+   "回帰テスト（リグレッションテスト）",
+   "単体テスト",
+   "受入テスト",
+   "性能テスト"
+  ],
+  "answer": 0,
+  "explanation": "テストを自動化しておくと、修正のたびに効率よく確認できます。"
+ },
+ {
+  "id": "it-085",
+  "subject": "it",
+  "topic": "システム開発",
+  "level": 2,
+  "type": "mc4",
+  "question": "非機能要件の例として正しいものは？",
+  "choices": [
+   "画面の応答時間は2秒以内とする",
+   "受注データを登録できる",
+   "請求書を印刷できる",
+   "在庫を照会できる"
+  ],
+  "answer": 0,
+  "explanation": "性能・可用性・セキュリティ・保守性などが非機能要件です。他はシステムが持つ機能（機能要件）です。"
+ },
+ {
+  "id": "it-086",
+  "subject": "it",
+  "topic": "見積",
+  "level": 2,
+  "type": "mc4",
+  "question": "システムの入出力やファイルなどの機能の数と複雑さから、開発規模を見積もる手法は？",
+  "choices": [
+   "ファンクションポイント法",
+   "COCOMO",
+   "PERT",
+   "デルファイ法"
+  ],
+  "answer": 0,
+  "explanation": "プログラム言語に依存せずに見積もれます。"
+ },
+ {
+  "id": "it-087",
+  "subject": "it",
+  "topic": "見積",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】COCOMOは、開発規模（ソースコードの行数など）から開発工数を見積もるモデルである。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。"
+ },
+ {
+  "id": "it-088",
+  "subject": "it",
+  "topic": "ITサービス",
+  "level": 1,
+  "type": "mc4",
+  "question": "ITサービスの提供者と利用者の間で、サービスの品質水準を合意して文書にしたものは？",
+  "choices": [
+   "SLA",
+   "RFP",
+   "NDA",
+   "SOW"
+  ],
+  "answer": 0,
+  "explanation": "稼働率や障害時の復旧時間などを定めます。"
+ },
+ {
+  "id": "it-089",
+  "subject": "it",
+  "topic": "ITサービス",
+  "level": 2,
+  "type": "mc4",
+  "question": "ITサービスマネジメントのベストプラクティスをまとめたフレームワークは？",
+  "choices": [
+   "ITIL",
+   "PMBOK",
+   "COBIT",
+   "CMMI"
+  ],
+  "answer": 0,
+  "explanation": "PMBOKはプロジェクトマネジメント、CMMIは開発プロセスの成熟度モデルです。"
+ },
+ {
+  "id": "it-090",
+  "subject": "it",
+  "topic": "調達",
+  "level": 1,
+  "type": "mc4",
+  "question": "システムを発注する企業が、ベンダーに具体的な提案を求めるために作成する文書は？",
+  "choices": [
+   "RFP（提案依頼書）",
+   "RFI（情報提供依頼書）",
+   "SLA",
+   "NDA"
+  ],
+  "answer": 0,
+  "explanation": "システムの目的・要件・予算・納期などを記載します。"
+ },
+ {
+  "id": "it-091",
+  "subject": "it",
+  "topic": "調達",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】RFI（情報提供依頼書）は、ベンダーに具体的な見積金額と契約条件を提示させるための文書である。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 1,
+  "explanation": "×。RFIは、ベンダーの製品や技術などの情報を集めるための文書です。具体的な提案はRFPで求めます。"
+ },
+ {
+  "id": "it-092",
+  "subject": "it",
+  "topic": "調達",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】準委任契約では、受託者は成果物を完成させる責任を負う。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 1,
+  "explanation": "×。成果物の完成責任を負うのは請負契約です。準委任契約は業務を適切に遂行する義務を負います。"
+ },
+ {
+  "id": "it-093",
+  "subject": "it",
+  "topic": "経営とIT",
+  "level": 2,
+  "type": "mc4",
+  "question": "業務プロセスを根本から見直し、抜本的に再設計することを何という？",
+  "choices": [
+   "BPR",
+   "BPO",
+   "ERP",
+   "SCM"
+  ],
+  "answer": 0,
+  "explanation": "ビジネス・プロセス・リエンジニアリング。BPOは業務の外部委託です。"
+ },
+ {
+  "id": "it-094",
+  "subject": "it",
+  "topic": "経営とIT",
+  "level": 1,
+  "type": "mc4",
+  "question": "会計・人事・生産・販売などの基幹業務を統合して管理するシステムは？",
+  "choices": [
+   "ERP",
+   "SFA",
+   "CRM",
+   "POS"
+  ],
+  "answer": 0,
+  "explanation": "データを一元管理し、全社的な経営資源の最適化を図ります。"
+ },
+ {
+  "id": "it-095",
+  "subject": "it",
+  "topic": "経営とIT",
+  "level": 1,
+  "type": "mc4",
+  "question": "営業担当者の活動や商談の進み具合を管理し、営業活動を支援するシステムは？",
+  "choices": [
+   "SFA",
+   "ERP",
+   "SCM",
+   "CAD"
+  ],
+  "answer": 0,
+  "explanation": "顧客との関係全体を管理するのはCRMです。"
+ },
+ {
+  "id": "it-096",
+  "subject": "it",
+  "topic": "経営とIT",
+  "level": 1,
+  "type": "mc4",
+  "question": "パソコンで行う定型的な事務作業を、ソフトウェアのロボットで自動化する技術は？",
+  "choices": [
+   "RPA",
+   "AI",
+   "IoT",
+   "OCR"
+  ],
+  "answer": 0,
+  "explanation": "データ入力や転記などの繰り返し作業に向いています。"
+ },
+ {
+  "id": "it-097",
+  "subject": "it",
+  "topic": "経営とIT",
+  "level": 2,
+  "type": "tf",
+  "question": "【○×】IoTとは、さまざまなモノがインターネットにつながり、データをやりとりする仕組みのことである。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 0,
+  "explanation": "○。センサーで集めたデータを分析し、設備の予知保全などに活用します。"
+ },
+ {
+  "id": "it-098",
+  "subject": "it",
+  "topic": "統計",
+  "level": 1,
+  "type": "mc4",
+  "question": "データ 1、2、3、4、100 の中央値は？",
+  "choices": [
+   "3",
+   "4",
+   "22",
+   "100"
+  ],
+  "answer": 0,
+  "explanation": "小さい順に並べた真ん中の値。外れ値（100）の影響を受けにくい代表値です。平均値は22。"
+ },
+ {
+  "id": "it-099",
+  "subject": "it",
+  "topic": "統計",
+  "level": 1,
+  "type": "mc4",
+  "question": "データのばらつきの大きさを表す指標は？",
+  "choices": [
+   "標準偏差",
+   "平均値",
+   "最頻値",
+   "中央値"
+  ],
+  "answer": 0,
+  "explanation": "分散の正の平方根です。"
+ },
+ {
+  "id": "it-100",
+  "subject": "it",
+  "topic": "統計",
+  "level": 1,
+  "type": "tf",
+  "question": "【○×】相関係数が0に近いほど、2つの変数の間の直線的な関係は強い。",
+  "choices": [
+   "○",
+   "×"
+  ],
+  "answer": 1,
+  "explanation": "×。相関係数は−1から1の値をとり、絶対値が1に近いほど直線的な関係が強くなります。"
+ }
+]
