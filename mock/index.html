@@ -109,6 +109,7 @@ label.f{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
 .tabbar button[aria-current="page"]{color:var(--gold)}
 .toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translateX(-50%) translateY(-120%);background:var(--panel);border:3px solid var(--gold);border-radius:6px;padding:10px 16px;font-family:var(--f-pixel);font-size:14px;z-index:9;transition:transform .35s;max-width:90vw;text-align:center}
 .toast.show{transform:translateX(-50%) translateY(0)}
+[hidden]{display:none!important}
 .lvup{position:fixed;inset:0;background:rgba(8,10,25,.85);display:grid;place-items:center;z-index:10}
 .lvup .win{text-align:center;max-width:300px}
 .lvup .big{font-family:var(--f-pixel);font-size:34px;color:var(--gold);margin:6px 0}
@@ -116,7 +117,7 @@ label.f{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
 </style>
 
 <div class="app">
-  <span class="mock-tag">MOCK v0.1 ・ 画面イメージ確認用</span>
+  <span class="mock-tag">MOCK v0.2 ・ 画面イメージ確認用</span>
   <main id="view" class="stack"></main>
 </div>
 
@@ -141,6 +142,11 @@ const QS=[
  {s:"it",q:"関係データベースで、表の各行を一意に識別するための列（の組合せ）を何という？",c:["外部キー","主キー","インデックス","ビュー"],a:1,e:"主キーは重複不可・NULL不可で、行を一意に識別します。"},
  {s:"sme",q:"中小企業基本法における製造業の中小企業者の定義は？",c:["資本金1億円以下 又は 従業員100人以下","資本金3億円以下 又は 従業員300人以下","資本金5千万円以下 又は 従業員50人以下","資本金3億円以下 かつ 従業員300人以下"],a:1,e:"製造業その他は「3億円以下 又は 300人以下」。「又は」がポイントです。"},
  {s:"c4",q:"ROE（自己資本利益率）を求める式は？",c:["当期純利益 ÷ 総資本","営業利益 ÷ 売上高","当期純利益 ÷ 自己資本","経常利益 ÷ 自己資本"],a:2,e:"ROE = 当期純利益 ÷ 自己資本。デュポン分解で売上高純利益率×総資本回転率×財務レバレッジ。"},
+ {s:"eco",tf:1,q:"【○×】GDPには、中古品の売買額も含まれる。",c:["○","×"],a:1,e:"×。GDPはその期間に新たに生み出された付加価値。中古品は過去に計上済みのため含みません（仲介手数料は含む）。"},
+ {s:"law",tf:1,q:"【○×】特許権の存続期間は、原則として出願日から20年である。",c:["○","×"],a:0,e:"○。特許権は出願日から20年（医薬品等は延長登録あり）。"},
+ {s:"ops",tf:1,q:"【○×】ECRSの原則の「E」は Eliminate（排除）を表す。",c:["○","×"],a:0,e:"○。E排除→C結合→R交換→S簡素化の順で改善を検討します。"},
+ {s:"c1",tf:1,q:"【○×】成果主義的な賃金制度は、短期的な成果志向を強め、長期的な人材育成やチームワークを損なうおそれがある。",c:["○","×"],a:0,e:"○。事例Iでは成果主義導入のデメリットと、評価の公平性・納得性の確保がよく問われます。"},
+ {s:"c3",tf:1,q:"【○×】受注生産の個別生産型企業では、一般に「見込み生産」より製品在庫が多くなりやすい。",c:["○","×"],a:1,e:"×。受注してから生産するため製品在庫は少なくなります。課題になりやすいのは納期管理です。"},
  {s:"c2",q:"2次試験 事例IIで頻出の「誰に・何を・どのように・効果」のうち、「誰に」にあたるのは？",c:["ターゲット顧客","販売チャネル","商品コンセプト","期待される売上"],a:0,e:"助言問題は「ターゲット・商品・手段・効果」を盛り込むと得点要素を拾いやすくなります。"},
 ];
 const TITLES=["見習い診断士","駆け出しの冒険者","論点ハンター","過去問の騎士","白書の賢者","ストレート合格の勇者"];
@@ -148,9 +154,21 @@ const TITLES=["見習い診断士","駆け出しの冒険者","論点ハンタ�
 // ---------- state (例データで開始。ブラウザ内のみに保存) ----------
 const DEF={lv:3,exp:140,streak:12,gold:860,hp:80,today:35,week:[90,45,120,0,75,60,35],
   quests:[{t:"一問一答バトルで5問正解",r:"EXP+30",d:false,k:"q5"},{t:"修行（学習）を30分",r:"EXP+40",d:true,k:"t30"},{t:"過去問を1年分記録",r:"GOLD+50",d:false,k:"km"}],
-  dlv:{eco:4,fin:6,mgt:3,ops:2,law:1,it:5,sme:2,c1:1,c2:1,c3:0,c4:2},exam1:"2027-08-07",exam2:"2027-10-24",win:0,km:{}};
-let S;try{S=JSON.parse(localStorage.getItem("sq-mock"))||structuredClone(DEF)}catch(e){S=structuredClone(DEF)}
-const save=()=>{try{localStorage.setItem("sq-mock",JSON.stringify(S))}catch(e){}};
+  dlv:{eco:4,fin:6,mgt:3,ops:2,law:1,it:5,sme:2,c1:1,c2:1,c3:0,c4:2},exam1:"2027-08-07",exam2:"2027-10-24",win:0,km:{},notif:true,ntime:"20:30"};
+let S;try{S=JSON.parse(localStorage.getItem("sq-mock2"))||structuredClone(DEF)}catch(e){S=structuredClone(DEF)}
+const save=()=>{try{localStorage.setItem("sq-mock2",JSON.stringify(S))}catch(e){}};
+// 拠点の成長（累計GOLDで自動。GOLDは消費しない）
+const STAGES=[{n:"はじまりの村",g:0},{n:"にぎわいの街",g:1000},{n:"合格の城",g:3000}];
+const stageOf=g=>STAGES.reduce((a,s,i)=>g>=s.g?i:a,0);
+function baseSvg(st){const R=(x,y,w,h,f)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"/>`;
+ let s=R(0,0,96,40,"#2b2f6b")+R(0,40,96,14,"#3d6b3a")+R(0,50,96,4,"#2e5230")+R(70,6,6,6,"#f3efe0");
+ const hut=(x)=>R(x,30,12,10,"#c9a26b")+R(x-1,26,14,4,"#b5523b")+R(x+2,24,8,2,"#b5523b")+R(x+5,34,3,6,"#3b2a1a");
+ const house=(x,h,c)=>R(x,40-h,14,h,c)+R(x-1,36-h,16,4,"#3f5fd1")+R(x+2,44-h,3,3,"#f2c14e")+R(x+9,44-h,3,3,"#f2c14e")+R(x+5,34,4,6,"#3b2a1a");
+ if(st===0){s+=hut(20)+hut(44)+R(66,28,3,12,"#5a3b22")+R(62,22,11,8,"#3d8b3a")}
+ if(st===1){s+=R(4,32,88,8,"#8a8fa8")+house(10,14,"#e9e4cf")+house(30,18,"#d9c7a0")+house(52,14,"#e9e4cf")+house(72,16,"#d9c7a0")}
+ if(st===2){s+=R(4,30,88,10,"#8a8fa8")+R(30,14,36,26,"#d7d9e6")+R(26,8,10,32,"#c4c7d8")+R(60,8,10,32,"#c4c7d8")+R(43,2,10,14,"#c4c7d8")
+   +R(26,5,10,3,"#b5523b")+R(60,5,10,3,"#b5523b")+R(43,0,10,2,"#b5523b")+R(44,28,8,12,"#3b2a1a")+R(30,18,3,4,"#f2c14e")+R(63,18,3,4,"#f2c14e")+R(47,-2,1,4,"#f3efe0")+R(48,-2,4,2,"#f2c14e")}
+ return `<svg viewBox="0 0 96 54" width="100%" shape-rendering="crispEdges" style="display:block;border:2px solid var(--line);border-radius:4px" aria-label="${STAGES[st].n}">${s}</svg>`}
 const need=lv=>100+lv*40;
 
 // ---------- pixel sprites ----------
@@ -175,7 +193,7 @@ $("#lvupOk").onclick=()=>{$("#lvup").hidden=true;render()};
 
 // ---------- views ----------
 const TABS=[["home","拠点","M3 11l9-7 9 7v9h-6v-6H9v6H3z"],["battle","バトル","M5 19L19 5M15 5h4v4M5 15l4 4M3 21l3-3"],["train","修行","M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"],["log","記録","M4 20V10M10 20V4M16 20v-7M22 20H2"],["book","冒険の書","M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11"]];
-let tab="home",seg=1,battle=null,timer={on:false,sec:0,id:null,subj:"fin"};
+let tab="home",seg=1,battle=null,timer={on:false,sec:0,id:null,subj:"fin",mode:"free",brk:false,sets:0};
 function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,l,d])=>`<button data-k="${k}" ${tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="${d}"/></svg>${l}</button>`).join("");
  document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.k;render();scrollTo(0,0)})}
 
@@ -186,7 +204,11 @@ function hud(){const t=TITLES[Math.min(TITLES.length-1,Math.floor(S.lv/3))];
   <div class="chips"><span class="chip">連続 <b>${S.streak}</b> 日</span><span class="chip">GOLD <b>${S.gold}</b></span><span class="chip">1次まで <b>${days(S.exam1)}</b> 日</span></div></section>`}
 
 function vHome(){const subs=seg===1?SUBJ1:SUBJ2;
- return hud()+`<section class="win"><h2>▶ 本日のクエスト</h2>${S.quests.map(q=>`<div class="quest ${q.d?"done":""}"><span class="box">${q.d?"✓":""}</span><span class="qt">${q.t}</span><span class="rw">${q.r}</span></div>`).join("")}
+ const st=stageOf(S.gold),nx=STAGES[st+1];
+ return hud()+`<section class="win"><h2>▶ 拠点：${STAGES[st].n}</h2>${baseSvg(st)}
+ ${nx?`<div class="bar exp" style="margin-top:8px"><i style="width:${(S.gold-STAGES[st].g)/(nx.g-STAGES[st].g)*100}%"></i></div><div class="barlabel"><span>次は「${nx.n}」</span><span>あと ${nx.g-S.gold} GOLD</span></div>`:`<p class="note">最終段階に到達！</p>`}
+ <p class="note" style="margin:6px 0 0">GOLDは使わずにたまる一方のスコア。累計に応じて拠点が村→街→城と育ちます。</p></section>
+ <section class="win"><h2>▶ 本日のクエスト</h2>${S.quests.map(q=>`<div class="quest ${q.d?"done":""}"><span class="box">${q.d?"✓":""}</span><span class="qt">${q.t}</span><span class="rw">${q.r}</span></div>`).join("")}
  <p class="note" style="margin:8px 0 0">クエストは毎朝更新。全達成でボーナス宝箱。</p></section>
  <section class="win"><h2>▶ ダンジョン（科目）</h2><div class="seg"><button data-s="1" aria-pressed="${seg===1}">1次 7科目</button><button data-s="2" aria-pressed="${seg===2}">2次 4事例</button></div>
  <div class="dgrid">${subs.map(s=>{const lv=S.dlv[s.id]||0;return `<button class="dg" data-id="${s.id}"><div class="t">${s.n}</div><div class="lv"><span>B${lv}F / 10F</span><span>${lv*10}%</span></div><div class="bar mp"><i style="width:${lv*10}%"></i></div></button>`}).join("")}</div>
@@ -198,16 +220,23 @@ function vBattle(){if(!battle)newBattle();const b=battle,q=b.q,sn=[...SUBJ1,...S
  return `<section><div class="arena"><div class="monhp"><div class="barlabel"><span class="pix">${MON[q.s]}</span><span>HP ${b.mhp}</span></div><div class="bar hp"><i style="width:${b.mhp}%"></i></div></div>
  <div class="mon" id="mon">${monSvg(q.s)}</div><div class="dmg" id="dmg">-25</div></div></section>
  <section class="win"><div class="note">${sn}　連続正解 ${S.win}</div><div class="msg">${q.q}</div>
- <div class="choices">${q.c.map((c,i)=>`<button class="choice ${b.ans!==null?(i===q.a?"right":i===b.ans?"wrong":""):""}" data-i="${i}" ${b.ans!==null?"disabled":""}>${"ABCD"[i]}．${c}</button>`).join("")}</div>
+ <div class="choices" ${q.tf?'style="grid-template-columns:1fr 1fr"':""}>${q.c.map((c,i)=>`<button class="choice ${b.ans!==null?(i===q.a?"right":i===b.ans?"wrong":""):""}" data-i="${i}" ${b.ans!==null?"disabled":""} ${q.tf?'style="text-align:center;font-size:28px;padding:6px"':""}>${q.tf?c:"ABCD"[i]+"．"+c}</button>`).join("")}</div>
  ${b.ans!==null?`<div class="explain">${b.ans===q.a?"会心の一撃！":"ダメージを受けた…"}　${q.e}</div><div style="margin-top:12px;display:grid;gap:8px"><button class="btn" id="next">${b.mhp<=0?"宝箱をあける":"つぎの問題へ"}</button></div>`:""}
- </section><p class="note">モックでは各科目1問のサンプル。製品版は1次・2次の各科目約100問、間違えた問題は「復習の塔」に自動で積まれます。</p>`}
+ </section><p class="note">出題は4択と○×の混合。モックは数問のサンプルで、製品版は1次・2次の各科目約100問です。間違えた問題は「復習の塔」に自動で積まれます。</p>`}
 
-function vTrain(){const all=[...SUBJ1,...SUBJ2];const mm=String(Math.floor(timer.sec/60)).padStart(2,"0"),ss=String(timer.sec%60).padStart(2,"0");
- return hud()+`<section class="win"><h2>▶ 修行の間（学習タイマー）</h2><label class="f" for="tsubj">修行する科目</label>
+const fmt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+function clockText(){if(timer.mode==="pomo"){const left=(timer.brk?5:25)*60-timer.sec;return fmt(Math.max(0,left))}return fmt(timer.sec)}
+function vTrain(){const all=[...SUBJ1,...SUBJ2];
+ return hud()+`<section class="win"><h2>▶ 修行の間（学習タイマー）</h2>
+ <div class="seg"><button data-m="free" aria-pressed="${timer.mode==="free"}">自由計測</button><button data-m="pomo" aria-pressed="${timer.mode==="pomo"}">ポモドーロ</button><button data-m="manual" aria-pressed="${timer.mode==="manual"}">手入力</button></div>
+ <label class="f" for="tsubj">修行する科目</label>
  <select id="tsubj">${all.map(s=>`<option value="${s.id}" ${timer.subj===s.id?"selected":""}>${s.n}</option>`).join("")}</select>
- <div class="timer" id="tclock">${mm}:${ss}</div><div style="display:grid;gap:8px"><button class="btn" id="tbtn">${timer.on?"いったん休む":"修行をはじめる"}</button>
- <button class="btn ghost" id="tend">修行をおえる（記録する）</button></div>
- <p class="note">1分 = EXP 2。モックでは1秒を1分として早送りします。今日の修行：${S.today}分</p></section>`}
+ ${timer.mode==="manual"?`<label class="f" for="mmin">学習した時間</label><select id="mmin">${[15,30,45,60,90,120].map(m=>`<option value="${m}">${m}分</option>`).join("")}</select><div style="margin-top:12px"><button class="btn" id="mrec">記録する</button></div>`:
+ `${timer.mode==="pomo"?`<p class="pix" style="text-align:center;margin:8px 0 0;color:${timer.brk?"var(--ok)":"var(--gold)"}">${timer.brk?"休憩 5分":"集中 25分"}　（${timer.sets}セット完了）</p>`:""}
+ <div class="timer" id="tclock">${clockText()}</div><div style="display:grid;gap:8px"><button class="btn" id="tbtn">${timer.on?"いったん休む":"修行をはじめる"}</button>
+ ${timer.mode==="free"?`<button class="btn ghost" id="tend">修行をおえる（記録する）</button>`:""}</div>`}
+ <p class="note">1分 = EXP 2。ポモドーロは25分ごとに自動で記録。モックでは1秒を1分として早送りします。今日の修行：${S.today}分</p></section>`}
+function record(m){S.today+=m;S.week[6]+=m;if(S.today>=30)doneQuest("t30");gainExp(m*2,m+"分の修行を記録")}
 
 function vLog(){const mx=Math.max(...S.week,60),lbl=["月","火","水","木","金","土","日"];const tot=S.week.reduce((a,b)=>a+b,0);
  const years=["R7","R6","R5","R4","R3"];
@@ -224,6 +253,10 @@ function vBook(){return `<section class="win"><h2>▶ 冒険の書（設定・�
  <label class="f" for="e2">2次試験日（仮）</label><input type="date" id="e2" value="${S.exam2}">
  <label class="f" for="goal">週の目標修行時間</label><select id="goal"><option>10時間</option><option selected>15時間</option><option>20時間</option></select>
  <div class="chips"><span class="chip">1次まで <b>${days(S.exam1)}</b>日</span><span class="chip">2次まで <b>${days(S.exam2)}</b>日</span></div></section>
+ <section class="win"><h2>▶ お知らせ（通知）</h2>
+ <label class="f" style="display:flex;justify-content:space-between;align-items:center"><span>毎日のクエスト通知</span><input type="checkbox" id="notif" ${S.notif?"checked":""}></label>
+ <label class="f" for="ntime">通知する時刻</label><input type="time" id="ntime" value="${S.ntime}" ${S.notif?"":"disabled"} style="width:100%;background:#0f1430;color:var(--ink);border:1px solid #4a5590;border-radius:4px;padding:8px;font:inherit">
+ <p class="note">例：「勇者よ、今日のクエストが3つ待っている！（連続12日目）」と端末内から通知。サーバー不要。</p></section>
  <section class="win"><h2>▶ 逆算プラン（自動）</h2>
  ${[["今〜3月","財務・会計／経済学で基礎体力"],["4月〜6月","暗記系（法務・情報・中小）を周回"],["7月","過去問5年分×7科目の総仕上げ"],["8月〜10月","2次 事例I〜IVを週2事例"]].map(([a,b])=>`<div class="quest"><span class="box"></span><span><b class="pix" style="font-weight:400;color:var(--gold)">${a}</b><br>${b}</span><span></span></div>`).join("")}
  </section><section class="win"><h2>▶ セーブデータ</h2><p class="note">データはこの端末の中だけに保存（サーバー送信なし）。</p><button class="btn ghost" id="reset">モックを初期状態にもどす</button></section>`}
@@ -238,9 +271,15 @@ function bind(){
   else{S.win=0;S.hp=Math.max(0,S.hp-10);save();render();}});
  const nx=$("#next");if(nx)nx.onclick=()=>{if(battle.mhp<=0){S.gold+=40;toast(MON[battle.q.s]+"をたおした！ GOLD +40");battle.mhp=100}newBattle(battle.filter);save();render()};
  const ts=$("#tsubj");if(ts)ts.onchange=()=>timer.subj=ts.value;
- const tb=$("#tbtn");if(tb)tb.onclick=()=>{timer.on=!timer.on;if(timer.on){timer.id=setInterval(()=>{timer.sec+=60;const c=$("#tclock");if(c)c.textContent=String(Math.floor(timer.sec/60)).padStart(2,"0")+":00"},1000)}else clearInterval(timer.id);render()};
+ document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{clearInterval(timer.id);Object.assign(timer,{mode:b.dataset.m,on:false,sec:0,brk:false});render()});
+ const tb=$("#tbtn");if(tb)tb.onclick=()=>{timer.on=!timer.on;if(timer.on){timer.id=setInterval(()=>{timer.sec+=60;
+   if(timer.mode==="pomo"&&timer.sec>=(timer.brk?5:25)*60){timer.sec=0;if(!timer.brk){timer.sets++;record(25)}timer.brk=!timer.brk;render();return}
+   const c=$("#tclock");if(c)c.textContent=clockText()},1000)}else clearInterval(timer.id);render()};
  const te=$("#tend");if(te)te.onclick=()=>{clearInterval(timer.id);timer.on=false;const m=Math.floor(timer.sec/60);if(m<1){toast("まだ修行していないようだ");return}
-  S.today+=m;S.week[6]+=m;timer.sec=0;if(S.today>=30)doneQuest("t30");gainExp(m*2,m+"分の修行を記録");render()};
+  timer.sec=0;record(m);render()};
+ const mr=$("#mrec");if(mr)mr.onclick=()=>{record(+$("#mmin").value);render()};
+ const nt=$("#notif");if(nt)nt.onchange=()=>{S.notif=nt.checked;save();render();toast(S.notif?"通知をオンにした":"通知をオフにした")};
+ const ntm=$("#ntime");if(ntm)ntm.onchange=()=>{S.ntime=ntm.value;save();toast(S.ntime+" に通知します")};
  document.querySelectorAll(".kakomon button").forEach(b=>b.onclick=()=>{const td=b.parentElement,cur=td.className,nx={"":"o",o:"t",t:"x",x:""}[cur]??"o";S.km[b.dataset.k]=nx;
   if(Object.keys(S.km).length>=12)doneQuest("km");save();render()});
  ["e1","e2"].forEach(id=>{const el=$("#"+id);if(el)el.onchange=()=>{S[id==="e1"?"exam1":"exam2"]=el.value;save();render()}});
