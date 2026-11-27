@@ -4,23 +4,26 @@ import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shindan_quest/models/question.dart';
+import 'package:shindan_quest/models/subjects.dart';
 import 'package:shindan_quest/state/game_state.dart';
 
 QuestionBank loadBank() {
-  final list = (jsonDecode(File('assets/questions/fin.json').readAsStringSync()) as List)
-      .map((e) => Question.fromJson(e))
-      .toList();
-  return QuestionBank({'fin': list});
+  final map = <String, List<Question>>{};
+  for (final f in Directory('assets/questions').listSync().whereType<File>().where((f) => f.path.endsWith('.json'))) {
+    final list = (jsonDecode(f.readAsStringSync()) as List).map((e) => Question.fromJson(e)).toList();
+    map[list.first.subject] = list;
+  }
+  return QuestionBank(map);
 }
 
 void main() {
   final bank = loadBank();
 
-  test('収録問題の整合性', () {
-    final qs = bank.of('fin');
-    expect(qs.length, 100);
-    expect(qs.map((q) => q.id).toSet().length, 100);
-    for (final q in qs) {
+  test('収録問題の整合性（全科目）', () {
+    expect(bank.bySubject.keys, containsAll(['fin', 'eco']));
+    expect(bank.byId.length, bank.bySubject.values.fold<int>(0, (a, l) => a + l.length), reason: 'IDの重複');
+    for (final q in bank.byId.values) {
+      expect(subjects.any((s) => s.id == q.subject), isTrue, reason: q.id);
       expect(q.answer, inInclusiveRange(0, q.choices.length - 1), reason: q.id);
       expect(q.choices.length, q.isTrueFalse ? 2 : 4, reason: q.id);
     }
@@ -28,7 +31,7 @@ void main() {
 
   test('選択肢をシャッフルしても正解の中身は同じ', () {
     final rnd = Random(1);
-    for (final q in bank.of('fin')) {
+    for (final q in bank.byId.values) {
       final s = q.shuffled(rnd);
       expect(s.choices[s.answer], q.choices[q.answer]);
     }

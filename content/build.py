@@ -2,7 +2,8 @@
 import sys, json, html, subprocess, pathlib, importlib
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "content"))
-SUBJ = {"fin": "財務・会計"}
+SUBJ = {"eco": "経済学・経済政策", "fin": "財務・会計", "mgt": "企業経営理論", "ops": "運営管理", "law": "経営法務",
+        "it": "経営情報システム", "sme": "中小企業経営・政策", "c1": "事例I", "c2": "事例II", "c3": "事例III", "c4": "事例IV"}
 sid = sys.argv[1]
 Q = importlib.import_module(f"{sid}_questions").Q
 items = []
