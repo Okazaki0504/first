@@ -36,4 +36,6 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        # アップロードだけ行う（自分のiPhoneで試す「内部テスト」に審査は不要）。
+        # 外部テスターに配る段階になったら true にし、App Store Connect でテスト情報を入力する
+        submit_to_testflight: false
