@@ -69,6 +69,38 @@ body{background:var(--night);color:var(--ink);font-family:var(--f-body);font-siz
 @keyframes hit{0%,100%{transform:translateX(0);filter:none}25%{transform:translateX(-8px);filter:brightness(3)}75%{transform:translateX(8px)}}
 .arena .dmg{position:absolute;top:30%;font-family:var(--f-pixel);font-size:26px;color:var(--gold);text-shadow:2px 2px 0 #000;opacity:0}
 .arena .dmg.show{animation:pop .9s}
+/* --- 派手な演出（v0.5） --- */
+.arena.shake{animation:shake .35s}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-6px,3px)}40%{transform:translate(6px,-3px)}60%{transform:translate(-4px,2px)}80%{transform:translate(4px,-2px)}}
+.slash{position:absolute;left:50%;top:50%;width:180px;height:6px;margin:-3px 0 0 -90px;background:linear-gradient(90deg,transparent,#fff,var(--gold),transparent);transform:rotate(-30deg) scaleX(0);border-radius:3px;box-shadow:0 0 12px #fff;pointer-events:none}
+.slash.go{animation:slash .32s ease-out forwards}
+.slash.b{transform:rotate(30deg) scaleX(0)}.slash.b.go{animation:slash2 .32s .08s ease-out forwards}
+@keyframes slash{0%{transform:rotate(-30deg) scaleX(0);opacity:1}60%{transform:rotate(-30deg) scaleX(1.2);opacity:1}100%{transform:rotate(-30deg) scaleX(1.3);opacity:0}}
+@keyframes slash2{0%{transform:rotate(30deg) scaleX(0);opacity:1}60%{transform:rotate(30deg) scaleX(1.2);opacity:1}100%{transform:rotate(30deg) scaleX(1.3);opacity:0}}
+.pop{position:absolute;left:50%;top:38%;transform:translateX(-50%);font-family:var(--f-pixel);font-size:30px;color:#fff;text-shadow:3px 3px 0 #000,0 0 10px var(--gold);pointer-events:none;animation:pop2 1s forwards;white-space:nowrap}
+.pop.crit{font-size:28px;color:var(--gold)}
+@keyframes pop2{0%{opacity:0;transform:translate(-50%,10px) scale(.6)}20%{opacity:1;transform:translate(-50%,0) scale(1.25)}35%{transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-40px)}}
+.combo{position:absolute;right:10px;bottom:10px;font-family:var(--f-pixel);font-size:16px;color:var(--gold);text-shadow:2px 2px 0 #000;animation:bump .3s}
+@keyframes bump{0%{transform:scale(1.8)}100%{transform:scale(1)}}
+.flash{position:fixed;inset:0;background:#fff;pointer-events:none;z-index:8;animation:flash .25s forwards}
+@keyframes flash{0%{opacity:.7}100%{opacity:0}}
+.mon.dying{animation:dying .9s forwards}
+@keyframes dying{0%,20%,40%{opacity:1;filter:brightness(3)}10%,30%,50%{opacity:.2}70%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(.2) rotate(25deg)}}
+canvas.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.overlay{position:fixed;inset:0;display:grid;place-items:center;z-index:9;pointer-events:none}
+.warn{font-family:var(--f-pixel);font-size:44px;color:var(--hp);letter-spacing:.1em;text-shadow:0 0 16px var(--hp),3px 3px 0 #000;animation:warn 1.6s forwards;background:rgba(80,0,20,.55);width:100%;text-align:center;padding:14px 0;border-block:3px solid var(--hp)}
+@keyframes warn{0%{opacity:0;transform:scaleY(0)}12%{opacity:1;transform:scaleY(1)}25%,45%,65%{opacity:1}35%,55%{opacity:.35}85%{opacity:1}100%{opacity:0}}
+.victory{font-family:var(--f-pixel);font-size:42px;color:var(--gold);text-shadow:0 0 18px var(--gold),3px 3px 0 #000;animation:vic 2.2s forwards;text-align:center}
+.victory small{display:block;font-size:16px;color:#fff}
+@keyframes vic{0%{opacity:0;transform:scale(3)}15%{opacity:1;transform:scale(1)}85%{opacity:1}100%{opacity:0}}
+.chest{font-family:var(--f-pixel);font-size:18px;color:#fff;text-align:center;animation:vic 2s forwards}
+.chest .box{width:64px;height:48px;margin:0 auto 6px;background:#b5523b;border:4px solid var(--gold);border-radius:6px 6px 2px 2px;position:relative}
+.chest .box::before{content:"";position:absolute;left:-4px;right:-4px;top:-18px;height:18px;background:#c9683f;border:4px solid var(--gold);border-radius:8px 8px 0 0;transform-origin:left bottom;animation:lid .5s .3s forwards}
+@keyframes lid{to{transform:rotate(-35deg)}}
+.lvup .big{animation:bounce 1s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.lvup canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+.studied{font-size:11px;color:var(--ok);font-family:var(--f-pixel)}
 @keyframes pop{0%{opacity:0;transform:translateY(10px)}20%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}
 .monhp{position:absolute;top:8px;left:10px;right:10px}
 .monhp .barlabel{color:var(--ink)}
@@ -122,7 +154,7 @@ label.f{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
 </style>
 
 <div class="app">
-  <span class="mock-tag">MOCK v0.4 ・ 中小企業診断士 学習アプリ ─ 学習管理×一問一答</span>
+  <span class="mock-tag">MOCK v0.5 ・ 中小企業診断士 学習アプリ ─ 学習管理×一問一答</span>
   <main id="view" class="stack"></main>
 </div>
 
@@ -194,7 +226,7 @@ const $=s=>document.querySelector(s);
 const days=d=>Math.max(0,Math.ceil((new Date(d)-new Date(new Date().toDateString()))/864e5));
 function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),1800)}
 function gainExp(n,why){S.exp+=n;toast(`${why}  EXP +${n}`);while(S.exp>=need(S.lv)){S.exp-=need(S.lv);S.lv++;
-  $("#lvupN").textContent="Lv "+S.lv;$("#lvupT").textContent="称号「"+TITLES[Math.min(TITLES.length-1,Math.floor(S.lv/3))]+"」";$("#lvup").hidden=false}save()}
+  $("#lvupN").textContent="Lv "+S.lv;setTimeout(()=>{const l=$("#lvup");if(l&&!l.hidden)burst(l,["#f2c14e","#fff","#5ec8f2"],90,{speed:6,up:3})},50);$("#lvupT").textContent="称号「"+TITLES[Math.min(TITLES.length-1,Math.floor(S.lv/3))]+"」";$("#lvup").hidden=false}save()}
 function doneQuest(k){const q=S.quests.find(q=>q.k===k);if(q&&!q.d){q.d=true;setTimeout(()=>toast("クエスト達成！ "+q.r),1900)}}
 $("#lvupOk").onclick=()=>{$("#lvup").hidden=true;render()};
 
@@ -202,7 +234,7 @@ $("#lvupOk").onclick=()=>{$("#lvup").hidden=true;render()};
 const TABS=[["home","拠点","M3 11l9-7 9 7v9h-6v-6H9v6H3z"],["battle","バトル","M5 19L19 5M15 5h4v4M5 15l4 4M3 21l3-3"],["train","修行","M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"],["log","記録","M4 20V10M10 20V4M16 20v-7M22 20H2"],["book","冒険の書","M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11"]];
 let tab="home",seg=1,battle=null,timer={on:false,sec:0,id:null,subj:"fin",mode:"free",brk:false,sets:0};
 function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,l,d])=>`<button data-k="${k}" ${tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="${d}"/></svg>${l}</button>`).join("");
- document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.k;render();scrollTo(0,0)})}
+ document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{if(tab==="battle"&&b.dataset.k!=="battle")flushStudy();tab=b.dataset.k;if(tab==="battle")study.last=Date.now();render();scrollTo(0,0)})}
 
 function hud(){const t=TITLES[Math.min(TITLES.length-1,Math.floor(S.lv/3))];
  return `<section class="win"><div class="hud"><div class="avatar">${heroSvg()}</div><div>
@@ -223,17 +255,41 @@ function vHome(){const subs=seg===1?SUBJ1:SUBJ2;
  <div class="dgrid">${subs.map(s=>{const lv=S.dlv[s.id]||0;return `<button class="dg" data-id="${s.id}"><div class="t">${s.n}</div><div class="lv"><span>${lv>=10?'<b style="color:var(--hp);font-weight:400">BOSS</b>':"B"+lv+"F / 10F"}</span><span>${lv*10}%</span></div><div class="bar mp"><i style="width:${lv*10}%"></i></div></button>`}).join("")}</div>
  <p class="note" style="margin:8px 0 0">階層 = 一問一答の正答数で進む習熟度。10Fに着くとボス戦（10問中8問正解で科目クリア）。例として「財務・会計」がボス戦に挑戦できます。</p></section>`}
 
-function startBoss(s){newBattle(null);battle.boss={s,n:1,ok:0};tab="battle";render();toast("ボス戦！ 10問中8問正解で撃破")}
+// ---------- 演出 ----------
+function burst(host,colors,n=36,opt={}){const c=document.createElement("canvas");c.className="fx";host.appendChild(c);
+ const r=host.getBoundingClientRect(),dpr=2;c.width=r.width*dpr;c.height=r.height*dpr;const g=c.getContext("2d");g.scale(dpr,dpr);
+ const cx=opt.x??r.width/2,cy=opt.y??r.height/2;const ps=Array.from({length:n},()=>{const a=Math.random()*Math.PI*2,s=(opt.speed||4)*(0.4+Math.random());
+  return{x:cx,y:cy,vx:Math.cos(a)*s,vy:Math.sin(a)*s-(opt.up||1),life:1,sz:3+Math.random()*4,col:colors[Math.floor(Math.random()*colors.length)]}});
+ let t=0;(function step(){g.clearRect(0,0,r.width,r.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=opt.grav??.15;p.life-=.02;
+  g.globalAlpha=Math.max(0,p.life);g.fillStyle=p.col;g.fillRect(p.x,p.y,p.sz,p.sz)});if(++t<60)requestAnimationFrame(step);else c.remove()})()}
+function overlay(html,ms){const o=document.createElement("div");o.className="overlay";o.innerHTML=html;document.body.appendChild(o);setTimeout(()=>o.remove(),ms)}
+function flash(){const f=document.createElement("div");f.className="flash";document.body.appendChild(f);setTimeout(()=>f.remove(),300)}
+function attackFx(crit){const a=$(".arena");if(!a)return;a.classList.remove("shake");void a.offsetWidth;a.classList.add("shake");
+ ["slash","slash b"].forEach(k=>{const s=document.createElement("div");s.className=k;a.appendChild(s);requestAnimationFrame(()=>s.classList.add("go"));setTimeout(()=>s.remove(),500)});
+ const p=document.createElement("div");p.className="pop"+(crit?" crit":"");p.textContent=crit?`会心の一撃！ -${crit}`:"-25";a.appendChild(p);setTimeout(()=>p.remove(),1000);
+ burst(a,crit?["#f2c14e","#fff","#ff9f6b"]:["#fff","#f2c14e"],crit?50:24);if(crit)flash();
+ if(S.win>=2){const c=document.createElement("div");c.className="combo";c.textContent=S.win+" COMBO!";a.appendChild(c)}}
+function defeatFx(){const m=$("#mon"),a=$(".arena");if(m)m.classList.add("dying");setTimeout(()=>{if(a)burst(a,["#7ee08a","#fff","#5ec8f2","#f2c14e"],70,{speed:6})},600);
+ setTimeout(()=>{overlay('<div class="chest"><div class="box"></div>宝箱を手に入れた！<br><b style="color:#f2c14e">GOLD +40</b></div>',2000);
+  setTimeout(()=>burst(document.querySelector(".overlay")||document.body,["#f2c14e","#ffe08a"],40,{up:4,grav:.25}),350)},900)}
+function bossIntro(){overlay('<div class="warn">⚠ WARNING ⚠</div>',1600)}
+function victoryFx(){flash();overlay('<div class="victory">VICTORY!<small>科目クリア　GOLD +300</small></div>',2200);setTimeout(()=>burst(document.querySelector(".overlay"),["#f2c14e","#fff","#ff7aa8","#5ec8f2"],120,{speed:7,up:2}),100)}
+// ---------- 自動記録（バトル中の学習時間。1問あたり最大3分、閉じていた時間は数えない） ----------
+let study={sec:0,last:null};
+function studyTick(){const now=Date.now();if(study.last&&!document.hidden)study.sec+=Math.min((now-study.last)/1000,180);study.last=now}
+document.addEventListener("visibilitychange",()=>{study.last=document.hidden?null:Date.now()});
+function flushStudy(){studyTick();const m=Math.floor(study.sec/60);if(m>=1){S.today+=m;S.week[6]+=m;study.sec-=m*60;if(S.today>=30)doneQuest("t30");toast(`バトルの学習時間 ${m}分を自動で記録`)}study.last=null}
+function startBoss(s){newBattle(null);battle.boss={s,n:1,ok:0};tab="battle";render();bossIntro();toast("ボス戦！ 10問中8問正解で撃破")}
 function newBattle(s){const pool=QS.filter(q=>!s||q.s===s);const q=pool[Math.floor(Math.random()*pool.length)]||QS[0];
  battle={q,ans:null,mhp:battle&&battle.q.s===q.s&&battle.mhp>0?battle.mhp:100,filter:s||null}}
 function vBattle(){if(!battle)newBattle();const b=battle,q=b.q,sn=[...SUBJ1,...SUBJ2].find(x=>x.id===q.s).n,B=b.boss;
  const mname=B?"BOSS "+MON[B.s]+"王":MON[q.s],mhp=B?Math.max(0,100-B.ok*12.5):b.mhp;
  return `<section><div class="arena" ${B?'style="background:linear-gradient(#4a1f3a 0 55%,#2a1a2a 55% 100%)"':""}><div class="monhp"><div class="barlabel"><span class="pix">${mname}</span><span>${B?`${B.n}/10問　正解${B.ok}（8で撃破）`:"HP "+mhp}</span></div><div class="bar hp"><i style="width:${mhp}%"></i></div></div>
  <div class="mon" id="mon" ${B?'style="transform:scale(1.5)"':""}>${monSvg(B?B.s:q.s)}</div><div class="dmg" id="dmg">-25</div></div></section>
- <section class="win"><div class="note">${sn}　連続正解 ${S.win}</div><div class="msg">${q.q}</div>
+ <section class="win"><div class="note" style="display:flex;justify-content:space-between;gap:8px"><span>${sn}　連続正解 ${S.win}</span><span class="studied">⏱ 学習時間を自動記録中</span></div><div class="msg">${q.q}</div>
  <div class="choices" ${q.tf?'style="grid-template-columns:1fr 1fr"':""}>${q.c.map((c,i)=>`<button class="choice ${b.ans!==null?(i===q.a?"right":i===b.ans?"wrong":""):""}" data-i="${i}" ${b.ans!==null?"disabled":""} ${q.tf?'style="text-align:center;font-size:28px;padding:6px"':""}>${q.tf?c:"ABCD"[i]+"．"+c}</button>`).join("")}</div>
  ${b.ans!==null?`<div class="explain">${b.ans===q.a?"会心の一撃！":"ダメージを受けた…"}　${q.e}</div><div style="margin-top:12px;display:grid;gap:8px"><button class="btn" id="next">${B?(B.n>=10?"ボス戦の結果を見る":"つぎの問題へ"):b.mhp<=0?"宝箱をあける":"つぎの問題へ"}</button></div>`:""}
- </section><p class="note">${B?"ボス戦はその科目の全範囲からランダム10問（モックは全科目のサンプルから出題）。":""}出題は4択と○×の混合。モックは数問のサンプルで、製品版は1次・2次の各科目約100問です。間違えた問題は「復習の塔」に自動で積まれます。</p>`}
+ </section><p class="note">${B?"ボス戦はその科目の全範囲からランダム10問（モックは全科目のサンプルから出題）。":""}出題は4択と○×の混合。モックは数問のサンプルで、製品版は1次・2次の各科目約100問です。間違えた問題は「復習の塔」に自動で積まれます。バトル中の時間は自動で学習時間に記録（1問あたり最大3分、アプリを閉じていた時間は除外）。3問連続正解から「会心の一撃」。</p>`}
 
 const fmt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
 function clockText(){if(timer.mode==="pomo"){const left=(timer.brk?5:25)*60-timer.sec;return fmt(Math.max(0,left))}return fmt(timer.sec)}
@@ -283,11 +339,12 @@ function bind(){
  document.querySelectorAll(".dg").forEach(b=>b.onclick=()=>{if((S.dlv[b.dataset.id]||0)>=10){startBoss(b.dataset.id);return}const has=QS.some(q=>q.s===b.dataset.id);newBattle(has?b.dataset.id:null);if(!has)toast("この科目のサンプル問題は製品版で");tab="battle";render()});
  document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{const i=+b.dataset.i,bt=battle;bt.ans=i;
   if(i===bt.q.a&&bt.boss)bt.boss.ok++;
-  if(i===bt.q.a){bt.mhp=Math.max(0,bt.mhp-25);S.win++;S.dlv[bt.q.s]=Math.min(10,(S.dlv[bt.q.s]||0)+(S.win%3===0?1:0));render();
-   const m=$("#mon"),d=$("#dmg");m.classList.add("hit");d.classList.add("show");gainExp(15,"正解！");if(S.win>=5)doneQuest("q5");}
+  studyTick();
+  if(i===bt.q.a){S.win++;const crit=S.win>=3?50:0;bt.mhp=Math.max(0,bt.mhp-(crit||25));S.dlv[bt.q.s]=Math.min(10,(S.dlv[bt.q.s]||0)+(S.win%3===0?1:0));render();
+   const m=$("#mon");m.classList.add("hit");attackFx(crit);gainExp(15,"正解！");if(S.win>=5)doneQuest("q5");}
   else{S.win=0;S.hp=Math.max(0,S.hp-10);save();render();}});
- const nx=$("#next");if(nx)nx.onclick=()=>{const B=battle.boss;if(B){if(B.n>=10){const win=B.ok>=8;battle=null;tab="home";if(win){S.gold+=300;S.badges=(S.badges||[]).concat("fin-clear");gainExp(100,"ボス撃破！科目クリア GOLD+300")}else toast(`正解${B.ok}/10…あと${8-B.ok}問で撃破だった。再挑戦しよう`);save();render();return}
-   const keep=B;newBattle(null);battle.boss={...keep,n:keep.n+1};render();return}if(battle.mhp<=0){S.gold+=40;toast(MON[battle.q.s]+"をたおした！ GOLD +40");battle.mhp=100}newBattle(battle.filter);save();render()};
+ const nx=$("#next");if(nx)nx.onclick=()=>{const B=battle.boss;if(B){if(B.n>=10){const win=B.ok>=8;battle=null;tab="home";if(win){S.gold+=300;S.badges=(S.badges||[]).concat("fin-clear");victoryFx();setTimeout(()=>gainExp(100,"ボス撃破！科目クリア GOLD+300"),2300)}else toast(`正解${B.ok}/10…あと${8-B.ok}問で撃破だった。再挑戦しよう`);save();render();return}
+   const keep=B;newBattle(null);battle.boss={...keep,n:keep.n+1};render();return}if(battle.mhp<=0){S.gold+=40;defeatFx();battle.mhp=100;const f=battle.filter;setTimeout(()=>{newBattle(f);save();render()},2900);return}newBattle(battle.filter);save();render()};
  const ts=$("#tsubj");if(ts)ts.onchange=()=>timer.subj=ts.value;
  document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{clearInterval(timer.id);Object.assign(timer,{mode:b.dataset.m,on:false,sec:0,brk:false});render()});
  const tb=$("#tbtn");if(tb)tb.onclick=()=>{timer.on=!timer.on;if(timer.on){timer.id=setInterval(()=>{timer.sec+=60;
