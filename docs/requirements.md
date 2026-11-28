@@ -65,3 +65,4 @@
 - 掲載文：docs/appstore_listing.md（名前・サブタイトル・説明・キーワード・審査メモなど）
 - スクリーンショット：docs/screenshots/screenshot_1〜5.png（6.9インチ 1320×2868）。`content/make_screenshots.py` で再生成
 - プライバシーポリシー／サポート：docs/site/（公開先：公開リポジトリ shindan-support の GitHub Pages。連絡先 okazaki.developer@gmail.com）
+- 公開済み（2026-11-28）：プライバシーポリシー https://okazaki0504.github.io/shindan-support/privacy.html ／ サポート https://okazaki0504.github.io/shindan-support/support.html
