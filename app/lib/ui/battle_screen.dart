@@ -6,6 +6,7 @@ import '../logic/game_rules.dart';
 import '../models/question.dart';
 import '../models/subjects.dart';
 import '../state/game_state.dart';
+import 'fx.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -67,17 +68,39 @@ class BattleView extends StatefulWidget {
   State<BattleView> createState() => _BattleViewState();
 }
 
-class _BattleViewState extends State<BattleView> with SingleTickerProviderStateMixin {
+class _BattleViewState extends State<BattleView> with TickerProviderStateMixin {
   late BattleSession session;
   Question? q;
   int? picked;
   int monsterHp = 100;
+  bool busy = false; // 撃破演出の間はボタンを押せない
+  int fxId = 0; // 演出を再生するたびに増やす（新しいキーで作り直す）
+  bool lastCrit = false;
+  int lastDamage = 0;
   late final AnimationController hit = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
+  late final AnimationController shake = AnimationController(vsync: this, duration: const Duration(milliseconds: 350));
+  late final AnimationController dying = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+  NavigatorState? _nav;
 
   @override
   void initState() {
     super.initState();
     _start();
+    if (widget.standalone) widget.g.battleEnter();
+    if (widget.mode == BattleMode.boss && q != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Haptics.big();
+          showBossWarning(context);
+        }
+      });
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _nav = Navigator.maybeOf(context);
   }
 
   @override
@@ -95,39 +118,88 @@ class _BattleViewState extends State<BattleView> with SingleTickerProviderStateM
 
   @override
   void dispose() {
+    // 別画面のバトル（塔・ボス・ダンジョン）を閉じたら、学習時間を記録する
+    if (widget.standalone) {
+      final r = widget.g.flushBattleStudy();
+      final nav = _nav;
+      if (nav != null && nav.mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (nav.mounted) showReward(nav.context, r, widget.g);
+        });
+      }
+    }
     hit.dispose();
+    shake.dispose();
+    dying.dispose();
     super.dispose();
   }
 
   String get _monsterSubject => widget.mode == BattleMode.boss ? widget.subject! : (q?.subject ?? widget.subject ?? 'fin');
 
   void _answer(int i) {
-    if (picked != null || q == null) return;
+    if (picked != null || q == null || busy) return;
+    final g = widget.g;
     final ok = i == q!.answer;
-    setState(() => picked = i);
+    g.battleTick(q!.subject);
+    final r = g.answer(q!, ok, fromTower: widget.mode == BattleMode.tower);
+    setState(() {
+      picked = i;
+      if (ok) {
+        session.correct++;
+        lastCrit = g.winStreak >= 3; // 3問連続正解から会心の一撃
+        lastDamage = lastCrit ? 50 : 25;
+        if (widget.mode == BattleMode.normal) monsterHp = max(0, monsterHp - lastDamage);
+        fxId++;
+      }
+    });
     if (ok) {
-      session.correct++;
-      Haptics.success();
+      lastCrit ? Haptics.big() : Haptics.success();
       hit.forward(from: 0);
-      if (widget.mode == BattleMode.normal) monsterHp = max(0, monsterHp - 25);
+      shake.forward(from: 0);
+      if (lastCrit) showFxOverlay(context, const FlashFx(), const Duration(milliseconds: 300));
     } else {
       Haptics.wrong();
     }
-    final r = widget.g.answer(q!, ok, fromTower: widget.mode == BattleMode.tower);
-    showReward(context, r, widget.g);
+    showReward(context, r, g);
   }
 
-  void _next() {
+  Future<void> _next() async {
     final g = widget.g;
+    if (busy) return;
     if (widget.mode == BattleMode.normal && monsterHp <= 0) {
-      showReward(context, g.monsterDefeated(_monsterSubject), g);
+      // 撃破：点滅して砕け散る → 宝箱
+      setState(() => busy = true);
+      Haptics.big();
+      dying.forward(from: 0);
+      await Future.delayed(const Duration(milliseconds: 600));
+      if (!mounted) return;
+      setState(() => fxId++);
+      await Future.delayed(const Duration(milliseconds: 300));
+      if (!mounted) return;
+      showChest(context, 40);
+      final r = g.monsterDefeated(_monsterSubject);
+      await Future.delayed(const Duration(milliseconds: 2000));
+      if (!mounted) return;
+      showReward(context, r, g);
+      dying.reset();
       monsterHp = 100;
+      busy = false;
     }
     if (session.finished) {
+      final nav = Navigator.of(context);
       if (widget.mode == BattleMode.boss) {
-        showReward(context, g.bossFinished(widget.subject!, session.correct), g);
+        final r = g.bossFinished(widget.subject!, session.correct);
+        if (g.bossCleared.contains(widget.subject)) {
+          setState(() => busy = true);
+          Haptics.big();
+          showVictory(context, '科目クリア　GOLD +300');
+          await Future.delayed(const Duration(milliseconds: 2300));
+        }
+        nav.pop();
+        if (nav.mounted) showReward(nav.context, r, g);
+        return;
       }
-      Navigator.of(context).pop();
+      nav.pop();
       return;
     }
     setState(() {
@@ -161,7 +233,14 @@ class _BattleViewState extends State<BattleView> with SingleTickerProviderStateM
             : 'HP $monsterHp';
 
     return _wrap(Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Container(
+      AnimatedBuilder(
+        animation: shake,
+        builder: (_, child) {
+          final t = shake.value;
+          final dx = (t == 0 || t == 1) ? 0.0 : sin(t * pi * 6) * 6 * (1 - t);
+          return Transform.translate(offset: Offset(dx, -dx / 2), child: child);
+        },
+        child: Container(
         height: 170,
         decoration: BoxDecoration(
           border: Border.all(color: C.line, width: 3),
@@ -186,17 +265,81 @@ class _BattleViewState extends State<BattleView> with SingleTickerProviderStateM
           ),
           Center(
             child: AnimatedBuilder(
-              animation: hit,
-              builder: (_, child) => Transform.translate(offset: Offset(sin(hit.value * pi * 4) * 8, 6), child: child),
+              animation: Listenable.merge([hit, dying]),
+              builder: (_, child) {
+                // 撃破：点滅→少し膨らむ→縮んで消える
+                final d = dying.value;
+                var opacity = 1.0, scale = 1.0, angle = 0.0;
+                if (d > 0) {
+                  if (d < 0.5) {
+                    opacity = ((d * 10).floor() % 2 == 0) ? 1.0 : 0.2;
+                  } else if (d < 0.7) {
+                    scale = 1 + (d - 0.5) / 0.2 * 0.15;
+                  } else {
+                    final k = (d - 0.7) / 0.3;
+                    scale = 1.15 - k * 0.95;
+                    opacity = 1 - k;
+                    angle = k * 0.45;
+                  }
+                }
+                return Opacity(
+                  opacity: opacity.clamp(0, 1),
+                  child: Transform.translate(
+                    offset: Offset(sin(hit.value * pi * 4) * 8, 6),
+                    child: Transform.rotate(angle: angle, child: Transform.scale(scale: scale, child: child)),
+                  ),
+                );
+              },
               child: Transform.scale(scale: boss ? 1.4 : 1, child: PixelSprite.monster(s.color)),
             ),
           ),
+          // 正解時の演出（斬撃・火花・ダメージ・コンボ）
+          if (picked != null && picked == question.answer) ...[
+            Positioned.fill(child: SlashFx(key: ValueKey('slash$fxId'))),
+            Positioned.fill(
+              child: ParticleBurst(
+                key: ValueKey('spark$fxId'),
+                colors: lastCrit ? const [C.gold, Colors.white, Color(0xFFFF9F6B)] : const [Colors.white, C.gold],
+                count: lastCrit ? 50 : 24,
+                duration: const Duration(milliseconds: 800),
+              ),
+            ),
+            Positioned.fill(
+              child: DamagePop(
+                key: ValueKey('dmg$fxId'),
+                text: lastCrit ? '会心の一撃！ -$lastDamage' : '-$lastDamage',
+                crit: lastCrit,
+              ),
+            ),
+            if (g.winStreak >= 2)
+              Positioned(
+                right: 10,
+                bottom: 8,
+                child: Text('${g.winStreak} COMBO!',
+                    style: px(16, color: C.gold).copyWith(shadows: const [Shadow(color: Colors.black, offset: Offset(2, 2))])),
+              ),
+          ],
+          // 撃破時の大きな火花
+          if (busy && dying.value > 0)
+            Positioned.fill(
+              child: ParticleBurst(
+                key: ValueKey('defeat$fxId'),
+                colors: const [C.ok, Colors.white, C.mp, C.gold],
+                count: 70,
+                speed: 6,
+                duration: const Duration(milliseconds: 1100),
+              ),
+            ),
         ]),
+      ),
       ),
       const SizedBox(height: 16),
       RpgWindow(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Note('${subjectById(question.subject).name}・${question.topic}　連続正解 ${g.winStreak}'),
+          Row(children: [
+            Expanded(child: Note('${subjectById(question.subject).name}・${question.topic}　連続正解 ${g.winStreak}')),
+            Text('⏱ 自動記録中', style: px(11, color: C.ok)),
+          ]),
           const SizedBox(height: 4),
           Text(question.text, style: px(14).copyWith(height: 1.7)),
           const SizedBox(height: 10),
@@ -223,7 +366,7 @@ class _BattleViewState extends State<BattleView> with SingleTickerProviderStateM
               session.finished
                   ? (boss ? 'ボス戦の結果を見る' : '塔をおりる')
                   : (widget.mode == BattleMode.normal && monsterHp <= 0 ? '宝箱をあける' : 'つぎの問題へ'),
-              onPressed: _next,
+              onPressed: busy ? null : _next,
             ),
           ],
         ]),
@@ -233,7 +376,7 @@ class _BattleViewState extends State<BattleView> with SingleTickerProviderStateM
           ? 'ボス戦：この科目からランダム$bossQuestions問。$bossWinCorrect問正解で科目クリア。'
           : tower
               ? '間違えた問題は1→3→7→14日後に再出題。3回連続正解で卒業。'
-              : '間違えた問題は「復習の塔」に自動で積まれます。'),
+              : '間違えた問題は「復習の塔」に自動で積まれます。3問連続正解で会心の一撃。バトル中の時間は学習時間に自動で記録（1問あたり最大3分）。'),
     ]));
   }
 

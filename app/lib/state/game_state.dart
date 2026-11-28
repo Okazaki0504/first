@@ -320,6 +320,59 @@ class GameState extends ChangeNotifier {
     return _finish(r);
   }
 
+  // ---- バトル中の学習時間の自動記録 ----
+  /// 1問あたりに数える最大の時間（これを超えた分は放置とみなす）
+  static const maxSecondsPerQuestion = 180;
+  final Map<String, double> _battleSec = {};
+  DateTime? _battleLast;
+  bool _inBattle = false;
+
+  /// バトル画面に入ったとき
+  void battleEnter() {
+    _inBattle = true;
+    _battleLast = now;
+  }
+
+  /// 問題に答えたとき：前回からの経過時間（最大3分）をその科目に加える
+  void battleTick(String subject) {
+    final n = now;
+    if (_battleLast != null) {
+      final sec = n.difference(_battleLast!).inMilliseconds / 1000;
+      _battleSec[subject] = (_battleSec[subject] ?? 0) + sec.clamp(0, maxSecondsPerQuestion.toDouble());
+    }
+    _battleLast = n;
+  }
+
+  /// アプリが閉じられたとき：その間の時間は数えない
+  void battlePause() => _battleLast = null;
+
+  /// アプリに戻ったとき
+  void battleResume() {
+    if (_inBattle) _battleLast = now;
+  }
+
+  /// バトル画面を離れたとき：1分以上たまった分を学習時間として記録する
+  Reward flushBattleStudy() {
+    _inBattle = false;
+    _battleLast = null;
+    _rollover();
+    final r = Reward();
+    var total = 0;
+    final day = studyLog.putIfAbsent(_dayKey(now), () => {});
+    for (final e in _battleSec.entries.toList()) {
+      final m = e.value ~/ 60;
+      if (m < 1) continue;
+      day[e.key] = (day[e.key] ?? 0) + m;
+      _battleSec[e.key] = e.value - m * 60;
+      total += m;
+    }
+    if (total == 0) return r;
+    _gainExp(total * 2, r);
+    r.add('バトルの学習時間 $total分を自動で記録 EXP+${total * 2}');
+    _markActive(r);
+    return _finish(r);
+  }
+
   /// 過去問の○△×を切り替える（空→○→△→×→空）
   Reward cyclePastMark(String subject, String year, int no) {
     _rollover();

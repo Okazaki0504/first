@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../logic/game_rules.dart';
 import '../state/game_state.dart';
+import 'fx.dart';
 import 'theme.dart';
 
 /// RPGのメッセージウィンドウ風の枠
@@ -312,7 +315,13 @@ void showReward(BuildContext context, Reward r, GameState g) {
     showDialog(
       context: context,
       barrierColor: const Color(0xD9080A19),
-      builder: (_) => Center(
+      builder: (_) => Stack(children: [
+        // 光の粒が舞う
+        const Positioned.fill(
+          child: ParticleBurst(
+              colors: [C.gold, Colors.white, C.mp], count: 90, speed: 6, up: 3, duration: Duration(milliseconds: 1500)),
+        ),
+        Center(
         child: SizedBox(
           width: 300,
           child: Material(
@@ -320,7 +329,7 @@ void showReward(BuildContext context, Reward r, GameState g) {
             child: RpgWindow(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 Text('LEVEL UP!', style: px(16)),
-                Text('Lv ${g.lv}', style: px(34, color: C.gold)),
+                _Bounce(child: Text('Lv ${g.lv}', style: px(34, color: C.gold))),
                 Text('称号「${titleFor(g.lv)}」', style: const TextStyle(fontSize: 12, color: C.muted)),
                 const SizedBox(height: 12),
                 GoldButton('つづける', onPressed: () => Navigator.of(context).pop()),
@@ -329,6 +338,31 @@ void showReward(BuildContext context, Reward r, GameState g) {
           ),
         ),
       ),
+      ]),
     );
   }
+}
+
+/// 上下にふわふわ弾む
+class _Bounce extends StatefulWidget {
+  final Widget child;
+  const _Bounce({required this.child});
+  @override
+  State<_Bounce> createState() => _BounceState();
+}
+
+class _BounceState extends State<_Bounce> with SingleTickerProviderStateMixin {
+  late final AnimationController c = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000))..repeat();
+  @override
+  void dispose() {
+    c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: c,
+        builder: (_, child) => Transform.translate(offset: Offset(0, -6 * sin(c.value * pi)), child: child),
+        child: widget.child,
+      );
 }

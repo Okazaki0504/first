@@ -9,6 +9,7 @@ import 'state/game_state.dart';
 import 'ui/battle_screen.dart';
 import 'ui/screens.dart';
 import 'ui/theme.dart';
+import 'ui/widgets.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,7 +76,12 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // 日付をまたいで復帰したときに表示を更新
-    if (state == AppLifecycleState.resumed) widget.g.updateSettings((_) {});
+    if (state == AppLifecycleState.resumed) {
+      widget.g.battleResume();
+      widget.g.updateSettings((_) {});
+    } else if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      widget.g.battlePause(); // アプリを閉じている間は学習時間に数えない
+    }
   }
 
   static const _tabs = [
@@ -120,6 +126,9 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
                 child: InkWell(
                   onTap: () {
                     Haptics.light();
+                    // バトルタブを離れたら、たまった学習時間を記録する
+                    if (tab == 1 && i != 1) showReward(context, g.flushBattleStudy(), g);
+                    if (i == 1 && tab != 1) g.battleEnter();
                     setState(() => tab = i);
                   },
                   child: Padding(

@@ -85,4 +85,29 @@ void main() {
     }
     expect(g.todayPastMarks, 1);
   });
+
+  test('バトル中の学習時間の自動記録（1問あたり最大3分、閉じていた時間は除外）', () {
+    var now = DateTime(2027, 3, 1, 9, 0, 0);
+    final g = GameState.inMemory(bank, clock: () => now);
+    final q = bank.of('fin').first;
+    g.battleEnter();
+    now = now.add(const Duration(seconds: 90)); // 1問目に90秒
+    g.battleTick(q.subject);
+    now = now.add(const Duration(minutes: 10)); // 2問目は放置して10分 → 3分だけ数える
+    g.battleTick(q.subject);
+    g.battlePause();
+    now = now.add(const Duration(minutes: 30)); // アプリを閉じていた30分は数えない
+    g.battleResume();
+    now = now.add(const Duration(seconds: 60));
+    g.battleTick(q.subject);
+    final r = g.flushBattleStudy(); // 90+180+60=330秒 → 5分
+    expect(g.todayMinutes, 5);
+    expect(r.messages.any((m) => m.contains('5分を自動で記録')), isTrue);
+    // 端数の30秒は次回に持ち越し
+    g.battleEnter();
+    now = now.add(const Duration(seconds: 30));
+    g.battleTick(q.subject);
+    g.flushBattleStudy();
+    expect(g.todayMinutes, 6);
+  });
 }
