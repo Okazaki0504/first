@@ -66,3 +66,7 @@
 - スクリーンショット：docs/screenshots/screenshot_1〜5.png（6.9インチ 1320×2868）。`content/make_screenshots.py` で再生成
 - プライバシーポリシー／サポート：docs/site/（公開先：公開リポジトリ shindan-support の GitHub Pages。連絡先 okazaki.developer@gmail.com）
 - 公開済み（2026-11-28）：プライバシーポリシー https://okazaki0504.github.io/shindan-support/privacy.html ／ サポート https://okazaki0504.github.io/shindan-support/support.html
+
+## TestFlight（2026-11-28）
+- Codemagic で初回ビルド成功 → App Store Connect にアップロード → 内部テストグループ「自分」で実機にインストールできた
+- codemagic.yaml は submit_to_testflight: false（内部テストのみ。外部テスト時に true にしてテスト情報を入力）
